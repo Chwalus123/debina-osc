@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx next:*)",
+      "Bash(node -e \"const ical = require\\(''./node_modules/node-ical''\\); console.log\\(''ok''\\)\")",
+      "Bash(mv \"44 A dół salon z jadalnią1.jpg\" \"44a-salon-1.jpg\")",
+      "Bash(mv \"44 A dół salon z jadalnią2.jpg\" \"44a-salon-2.jpg\")",
+      "Bash(mv \"44 A dół salon z jadalnią3.jpg\" \"44a-salon-3.jpg\")",
+      "Bash(mv \"44 A łazienka2.jpg\" \"44a-lazienka-2.jpg\")",
+      "Bash(mv \"44A dół sypialnia.jpg\" \"44a-sypialnia-1.jpg\")"
+    ]
+  }
+}
