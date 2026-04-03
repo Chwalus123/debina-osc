@@ -38,7 +38,7 @@ function emailWrapper(content: string): string {
 <div style="${baseStyle}">
   <div style="background: #0d2f45; padding: 24px 32px; border-radius: 12px 12px 0 0;">
     <h1 style="margin: 0; color: #ffffff; font-size: 20px; font-weight: 700; letter-spacing: 0.5px;">
-      Ośrodek Wypoczynkowy Dębina
+      Baza dla Odpoczynku
     </h1>
     <p style="margin: 4px 0 0; color: #b3ddf0; font-size: 13px;">Dębina, Wybrzeże Słowińskie</p>
   </div>
@@ -47,7 +47,7 @@ function emailWrapper(content: string): string {
   </div>
   <div style="padding: 16px 32px; text-align: center;">
     <p style="margin: 0; font-size: 11px; color: #94a3b8;">
-      Ośrodek Wypoczynkowy Dębina · ul. Modrzewiowa 29, 76-211 Dębina ·
+      Baza dla Odpoczynku · ul. Modrzewiowa 29, 76-211 Dębina ·
       <a href="mailto:${CONTACT_EMAIL}" style="color: #2280b8;">${CONTACT_EMAIL}</a>
     </p>
   </div>
@@ -144,7 +144,7 @@ export async function sendReservationRequest(res: Reservation): Promise<void> {
   `)
 
   await maybeSend({
-    from: `"Ośrodek Dębina" <${process.env.SMTP_USER}>`,
+    from: `"Baza dla Odpoczynku" <${process.env.SMTP_USER}>`,
     to: res.guestEmail,
     subject: `Prośba o rezerwację przyjęta — ${res.aptName} · ${formatDate(res.startDate)}`,
     html,
@@ -222,7 +222,7 @@ export async function sendOwnerNotification(
   `)
 
   await maybeSend({
-    from: `"System Rezerwacji Dębina" <${process.env.SMTP_USER}>`,
+    from: `"Baza dla Odpoczynku" <${process.env.SMTP_USER}>`,
     to: CONTACT_EMAIL,
     subject: `Nowa rezerwacja: ${res.guestName} · ${res.aptName} · ${formatDate(res.startDate)}`,
     html,
@@ -265,7 +265,7 @@ export async function sendConfirmationToGuest(res: Reservation): Promise<void> {
   `)
 
   await maybeSend({
-    from: `"Ośrodek Dębina" <${process.env.SMTP_USER}>`,
+    from: `"Baza dla Odpoczynku" <${process.env.SMTP_USER}>`,
     to: res.guestEmail,
     subject: `Rezerwacja potwierdzona — ${res.aptName} · ${formatDate(res.startDate)}`,
     html,
@@ -301,7 +301,7 @@ export async function sendCancellationToGuest(res: Reservation): Promise<void> {
   `)
 
   await maybeSend({
-    from: `"Ośrodek Dębina" <${process.env.SMTP_USER}>`,
+    from: `"Baza dla Odpoczynku" <${process.env.SMTP_USER}>`,
     to: res.guestEmail,
     subject: `Rezerwacja anulowana — ${res.aptName} · ${formatDate(res.startDate)}`,
     html,
@@ -350,7 +350,7 @@ export async function sendWaitlistNotification(
   `)
 
   await maybeSend({
-    from: `"Ośrodek Dębina" <${process.env.SMTP_USER}>`,
+    from: `"Baza dla Odpoczynku" <${process.env.SMTP_USER}>`,
     to: entry.email,
     subject: `Termin dostępny — ${aptName} · ${formatDate(entry.startDate)}`,
     html,

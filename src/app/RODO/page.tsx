@@ -7,7 +7,7 @@ const sections = [
   {
     title: '1. Administrator danych osobowych',
     content:
-      'Administratorem Państwa danych osobowych jest Placówka Szkoleniowa „FILAR" R. Szarłowski, prowadząca Ośrodek Wypoczynkowy Dębina. Kontakt z Administratorem możliwy jest pod adresem e‑mail: odpocznijspokojnie@gmail.com lub telefonicznie: +48 123 456 789.',
+      'Administratorem Państwa danych osobowych jest Placówka Szkoleniowa „FILAR" R. Szarłowski, prowadząca Bazę dla Odpoczynku. Kontakt z Administratorem możliwy jest pod adresem e‑mail: odpocznijspokojnie@gmail.com lub telefonicznie: +48 123 456 789.',
   },
   {
     title: '2. Cele i podstawy prawne przetwarzania',
@@ -69,7 +69,7 @@ export default function RodoPage() {
             className="text-xs font-semibold uppercase tracking-widest"
             style={{ color: '#3a8067' }}
           >
-            Ośrodek Dębina
+            Baza dla Odpoczynku
           </motion.span>
           <motion.h1
             initial={{ opacity: 0, y: 20 }}

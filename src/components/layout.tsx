@@ -135,7 +135,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               .
             </p>
             <p className="text-center text-xs mt-3" style={{ color: '#2280b8' }}>
-              © {new Date().getFullYear()} Ośrodek Wypoczynkowy Dębina. Wszelkie prawa zastrzeżone.
+              © {new Date().getFullYear()} Baza dla Odpoczynku. Wszelkie prawa zastrzeżone.
             </p>
           </div>
         </div>

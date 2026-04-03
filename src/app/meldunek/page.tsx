@@ -17,7 +17,7 @@ export default function MeldunekPage() {
             className="text-xs font-semibold uppercase tracking-widest"
             style={{ color: '#3a8067' }}
           >
-            Apartamenty nad morzem Dębina
+            Baza dla Odpoczynku
           </motion.span>
           <motion.h1
             initial={{ opacity: 0, y: 20 }}

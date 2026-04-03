@@ -23,10 +23,10 @@ const playfair = Playfair_Display({
 /* ─── Metadata SEO ─────────────────────────────────────────────── */
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://debina-osc.pl'),
+  metadataBase: new URL('https://bazadlaodpoczynku.pl'),
   title: {
-    default:  'Ośrodek Wypoczynkowy Dębina — Apartamenty nad Morzem Bałtyckim',
-    template: '%s | Ośrodek Dębina',
+    default:  'Baza dla Odpoczynku — Apartamenty nad Morzem Bałtyckim w Dębinie',
+    template: '%s | Baza dla Odpoczynku',
   },
   description:
     'Dwa komfortowe apartamenty w Dębinie nad Morzem Bałtyckim. Las, plaża i cisza — idealne miejsce na wypoczynek w Pobrzeżu Słowińskim. Rezerwuj online.',
@@ -34,12 +34,12 @@ export const metadata: Metadata = {
     'apartamenty Dębina', 'noclegi Dębina', 'Morze Bałtyckie wynajem', 'Pobrzeże Słowińskie',
     'apartamenty na wynajem Bałtyk', 'Ustka okolice', 'wypoczynek nad morzem',
   ],
-  authors: [{ name: 'Ośrodek Wypoczynkowy Dębina' }],
+  authors: [{ name: 'Baza dla Odpoczynku' }],
   openGraph: {
     type:        'website',
     locale:      'pl_PL',
-    siteName:    'Ośrodek Wypoczynkowy Dębina',
-    title:       'Ośrodek Wypoczynkowy Dębina — Apartamenty nad Morzem Bałtyckim',
+    siteName:    'Baza dla Odpoczynku',
+    title:       'Baza dla Odpoczynku — Apartamenty nad Morzem Bałtyckim w Dębinie',
     description: 'Dwa komfortowe apartamenty w Dębinie nad Morzem Bałtyckim. Las, plaża i cisza.',
     images: [
       {

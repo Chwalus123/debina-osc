@@ -119,7 +119,7 @@ function LoginForm({ onSuccess }: { onSuccess: () => void }) {
             Panel admina
           </h1>
           <p className="text-sm mb-6" style={{ color: '#64748b' }}>
-            Ośrodek Wypoczynkowy Dębina
+            Baza dla Odpoczynku
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -255,7 +255,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
         style={{ backgroundColor: '#0d2f45', color: '#fff' }}
       >
         <div>
-          <h1 className="font-bold text-lg">Panel Admina — Ośrodek Dębina</h1>
+          <h1 className="font-bold text-lg">Panel Admina — Baza dla Odpoczynku</h1>
           <p className="text-xs" style={{ color: '#b3ddf0' }}>
             {reservations.length} rezerwacji · {waitlist.length} na liście oczekujących
           </p>

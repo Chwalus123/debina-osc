@@ -14,7 +14,7 @@ const Logo = ({ variant = 'dark', iconOnly = false, className = '' }: LogoProps)
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src="/logo-ck.png"
-        alt="Logo Ośrodka Dębina"
+        alt="Logo Bazy dla Odpoczynku"
         width={44}
         height={44}
         style={{ objectFit: 'contain', flexShrink: 0 }}

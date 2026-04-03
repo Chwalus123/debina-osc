@@ -22,7 +22,7 @@ export default function GiftCardPage() {
           name,
           email,
           apartment: 'any',
-          message: 'Zapytanie o bon podarunkowy dla Ośrodka Dębina.',
+          message: 'Zapytanie o bon podarunkowy — Baza dla Odpoczynku.',
         }),
       })
     } catch { /* ignoruj błąd sieciowy */ }
@@ -42,7 +42,7 @@ export default function GiftCardPage() {
             className="text-xs font-semibold uppercase tracking-widest"
             style={{ color: '#3a8067' }}
           >
-            Ośrodek Dębina
+            Baza dla Odpoczynku
           </motion.span>
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -102,7 +102,7 @@ export default function GiftCardPage() {
                   className="text-2xl md:text-3xl"
                   style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700 }}
                 >
-                  Ośrodek Dębina
+                  Baza dla Odpoczynku
                 </h3>
                 <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.75)' }}>
                   Podaruj wypoczynek nad Morzem Bałtyckim — las, morze i&nbsp;cisza

@@ -126,26 +126,11 @@ function BookingCalendar({
     return getSlotForDate(date) !== null
   }
 
-  const tileClassName = ({ date }: { date: Date }): string => {
-    return isDateBlocked(date) ? 'blocked-date' : ''
-  }
-
-  const tileContent = ({ date }: { date: Date }): React.ReactNode => {
+  const tileClassName = ({ date, view }: { date: Date; view: string }): string => {
+    if (view !== 'month') return ''
     const slot = getSlotForDate(date)
-    if (!slot) return null
-    const bg = slot.status === 'confirmed' ? '#fee2e2' : '#fef3c7'
-    return (
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          backgroundColor: bg,
-          opacity: 0.6,
-          borderRadius: '4px',
-          pointerEvents: 'none',
-        }}
-      />
-    )
+    if (!slot) return ''
+    return slot.status === 'confirmed' ? 'cal-confirmed' : 'cal-pending'
   }
 
   const handleChange = (value: Date | [Date | null, Date | null] | null) => {
@@ -158,6 +143,14 @@ function BookingCalendar({
 
   return (
     <div className="relative">
+      <style>{`
+        .react-calendar__tile.cal-pending { background: #fef3c7 !important; }
+        .react-calendar__tile.cal-confirmed { background: #fee2e2 !important; }
+        .react-calendar__tile.cal-pending:hover,
+        .react-calendar__tile.cal-pending:focus { background: #fde68a !important; }
+        .react-calendar__tile.cal-confirmed:hover,
+        .react-calendar__tile.cal-confirmed:focus { background: #fca5a5 !important; }
+      `}</style>
       {loadingCal && (
         <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-white/70">
           <Loader2 size={24} className="animate-spin" style={{ color: '#124f74' }} />
@@ -170,7 +163,6 @@ function BookingCalendar({
         minDate={new Date()}
         tileDisabled={({ date }) => isDateBlocked(date)}
         tileClassName={tileClassName}
-        tileContent={tileContent}
         className="w-full"
       />
       {slots.length > 0 && (
@@ -377,7 +369,7 @@ export default function ContactPage() {
             className="text-xs font-semibold uppercase tracking-widest"
             style={{ color: '#3a8067' }}
           >
-            Ośrodek Dębina
+            Baza dla Odpoczynku
           </motion.span>
           <motion.h1
             initial={{ opacity: 0, y: 20 }}

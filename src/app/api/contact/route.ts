@@ -81,7 +81,7 @@ export async function POST(request: Request) {
     const guestHtml = `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; background: #f8fafc; border-radius: 8px;">
         <h2 style="color: #124f74; margin-top: 0;">Dziękujemy za zapytanie, ${name.split(' ')[0]}!</h2>
-        <p style="color: #4a5568;">Otrzymaliśmy Twoje zapytanie dotyczące rezerwacji w <strong>Ośrodku Wypoczynkowym Dębina</strong>.</p>
+        <p style="color: #4a5568;">Otrzymaliśmy Twoje zapytanie dotyczące rezerwacji w <strong>Bazie dla Odpoczynku</strong>.</p>
         <p style="color: #4a5568;">Potwierdzamy:</p>
         <ul style="color: #4a5568;">
           <li>Apartament: <strong>${aptLabel}</strong></li>
@@ -94,7 +94,7 @@ export async function POST(request: Request) {
             ✉️ <a href="mailto:odpocznijspokojnie@gmail.com" style="color: #0369a1;">odpocznijspokojnie@gmail.com</a>
           </p>
         </div>
-        <p style="margin-top: 20px; font-size: 12px; color: #94a3b8;">Ośrodek Wypoczynkowy Dębina · Dębina, Pobrzeże Słowińskie</p>
+        <p style="margin-top: 20px; font-size: 12px; color: #94a3b8;">Baza dla Odpoczynku · Dębina, Pobrzeże Słowińskie</p>
       </div>
     `
 
@@ -115,7 +115,7 @@ export async function POST(request: Request) {
       await Promise.all([
         /* Do właściciela */
         transporter.sendMail({
-          from:    `"Strona Dębina" <${process.env.SMTP_USER}>`,
+          from:    `"Baza dla Odpoczynku" <${process.env.SMTP_USER}>`,
           to:      contactEmail,
           replyTo: email,
           subject: `Zapytanie o rezerwację — ${name} · ${aptLabel}`,
@@ -123,9 +123,9 @@ export async function POST(request: Request) {
         }),
         /* Potwierdzenie dla gościa */
         transporter.sendMail({
-          from:    `"Ośrodek Dębina" <${process.env.SMTP_USER}>`,
+          from:    `"Baza dla Odpoczynku" <${process.env.SMTP_USER}>`,
           to:      email,
-          subject: 'Potwierdzenie zapytania — Ośrodek Dębina',
+          subject: 'Potwierdzenie zapytania — Baza dla Odpoczynku',
           html:    guestHtml,
         }),
       ])
