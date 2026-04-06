@@ -460,18 +460,20 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                             <StatusBadge status={res.status} />
                           </td>
                           <td className="px-4 py-3">
-                            {res.status === 'pending' && (
+                            {(res.status === 'pending' || res.status === 'confirmed') && (
                               <div className="flex gap-2">
-                                <button
-                                  onClick={() => handleAction(res.id, 'confirm')}
-                                  disabled={!!actionLoading}
-                                  className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-opacity hover:opacity-80 disabled:opacity-50"
-                                  style={{ backgroundColor: '#3a8067', color: '#fff' }}
-                                >
-                                  {actionLoading === res.id + 'confirm' ? (
-                                    <Loader2 size={12} className="animate-spin" />
-                                  ) : 'Potwierdź'}
-                                </button>
+                                {res.status === 'pending' && (
+                                  <button
+                                    onClick={() => handleAction(res.id, 'confirm')}
+                                    disabled={!!actionLoading}
+                                    className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-opacity hover:opacity-80 disabled:opacity-50"
+                                    style={{ backgroundColor: '#3a8067', color: '#fff' }}
+                                  >
+                                    {actionLoading === res.id + 'confirm' ? (
+                                      <Loader2 size={12} className="animate-spin" />
+                                    ) : 'Potwierdź'}
+                                  </button>
+                                )}
                                 <button
                                   onClick={() => handleAction(res.id, 'cancel')}
                                   disabled={!!actionLoading}
