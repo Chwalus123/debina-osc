@@ -1,8 +1,9 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
-import { ArrowRight, Info } from 'lucide-react'
+import { ArrowRight, Info, X, Send, Loader2, CheckCircle } from 'lucide-react'
 
 /* ─── Dane cennika ───────────────────────────────────────────── */
 
@@ -62,9 +63,165 @@ function PriceCell({ price, season }: { price: number; season: Season }) {
   )
 }
 
+/* ─── Modal zapytania ────────────────────────────────────────── */
+
+function InquiryModal({ onClose }: { onClose: () => void }) {
+  const [name, setName]       = useState('')
+  const [email, setEmail]     = useState('')
+  const [message, setMessage] = useState('')
+  const [status, setStatus]   = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [error, setError]     = useState('')
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setStatus('loading')
+    setError('')
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, apartment: 'any', message }),
+      })
+      const data = await res.json()
+      if (!res.ok) { setError(data.error ?? 'Błąd wysyłki.'); setStatus('error'); return }
+      setStatus('success')
+    } catch {
+      setError('Problem z połączeniem.')
+      setStatus('error')
+    }
+  }
+
+  const inputStyle = {
+    borderColor: '#e2e8f0',
+    color: '#0d2f45',
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ backgroundColor: 'rgba(10,31,46,0.6)' }}
+      onClick={e => { if (e.target === e.currentTarget) onClose() }}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 16 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 16 }}
+        transition={{ duration: 0.22, ease: 'easeOut' as const }}
+        className="w-full max-w-md rounded-3xl p-8 relative"
+        style={{ backgroundColor: '#fff', boxShadow: '0 24px 64px rgba(10,31,46,0.18)' }}
+      >
+        <button
+          onClick={onClose}
+          className="absolute top-5 right-5 p-1.5 rounded-full hover:bg-gray-100 transition-colors"
+        >
+          <X size={18} style={{ color: '#94a3b8' }} />
+        </button>
+
+        {status === 'success' ? (
+          <div className="flex flex-col items-center gap-4 py-8 text-center">
+            <CheckCircle size={48} style={{ color: '#3a8067' }} />
+            <h3 className="text-xl font-bold" style={{ color: '#0d2f45' }}>Wiadomość wysłana!</h3>
+            <p className="text-sm" style={{ color: '#64748b' }}>
+              Odpowiemy na Twoje zapytanie tak szybko jak to możliwe.
+            </p>
+            <button
+              onClick={onClose}
+              className="mt-2 px-6 py-2.5 rounded-2xl text-sm font-semibold"
+              style={{ backgroundColor: '#124f74', color: '#fff' }}
+            >
+              Zamknij
+            </button>
+          </div>
+        ) : (
+          <>
+            <h3
+              className="text-xl font-bold mb-1"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#0d2f45' }}
+            >
+              Napisz do nas
+            </h3>
+            <p className="text-sm mb-6" style={{ color: '#64748b' }}>
+              Zapytaj o wolny termin lub cokolwiek innego — odpiszemy szybko.
+            </p>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold mb-1" style={{ color: '#64748b' }}>
+                  Imię i nazwisko *
+                </label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  required
+                  placeholder="Jan Kowalski"
+                  className="w-full px-4 py-2.5 text-sm rounded-xl border outline-none transition-colors"
+                  style={inputStyle}
+                  onFocus={e => (e.currentTarget.style.borderColor = '#124f74')}
+                  onBlur={e => (e.currentTarget.style.borderColor = '#e2e8f0')}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold mb-1" style={{ color: '#64748b' }}>
+                  Adres e-mail *
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required
+                  placeholder="jan@example.com"
+                  className="w-full px-4 py-2.5 text-sm rounded-xl border outline-none transition-colors"
+                  style={inputStyle}
+                  onFocus={e => (e.currentTarget.style.borderColor = '#124f74')}
+                  onBlur={e => (e.currentTarget.style.borderColor = '#e2e8f0')}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold mb-1" style={{ color: '#64748b' }}>
+                  Wiadomość *
+                </label>
+                <textarea
+                  value={message}
+                  onChange={e => setMessage(e.target.value)}
+                  required
+                  rows={4}
+                  placeholder="Dzień dobry, chciałbym zapytać o dostępność terminu..."
+                  className="w-full px-4 py-2.5 text-sm rounded-xl border outline-none resize-none transition-colors"
+                  style={inputStyle}
+                  onFocus={e => (e.currentTarget.style.borderColor = '#124f74')}
+                  onBlur={e => (e.currentTarget.style.borderColor = '#e2e8f0')}
+                />
+              </div>
+
+              {error && (
+                <p className="text-sm" style={{ color: '#dc2626' }}>{error}</p>
+              )}
+
+              <button
+                type="submit"
+                disabled={status === 'loading'}
+                className="w-full py-3 rounded-2xl font-semibold text-sm flex items-center justify-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-60"
+                style={{ backgroundColor: '#124f74', color: '#fff' }}
+              >
+                {status === 'loading'
+                  ? <><Loader2 size={15} className="animate-spin" /> Wysyłanie...</>
+                  : <><Send size={14} /> Wyślij wiadomość</>
+                }
+              </button>
+            </form>
+          </>
+        )}
+      </motion.div>
+    </div>
+  )
+}
+
 /* ─── Strona ─────────────────────────────────────────────────── */
 
 export default function PricingPage() {
+  const [showModal, setShowModal] = useState(false)
+
   return (
     <>
       {/* NAGŁÓWEK */}
@@ -240,17 +397,21 @@ export default function PricingPage() {
                 Zapytaj o termin
                 <ArrowRight size={15} />
               </Link>
-              <a
-                href="mailto:odpocznijspokojnie@gmail.com"
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl font-semibold text-sm transition-all"
+              <button
+                onClick={() => setShowModal(true)}
+                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl font-semibold text-sm transition-all hover:bg-blue-50"
                 style={{ border: '1.5px solid #b3ddf0', color: '#124f74' }}
               >
                 Napisz bezpośrednio
-              </a>
+              </button>
             </div>
           </motion.div>
         </div>
       </section>
+
+      <AnimatePresence>
+        {showModal && <InquiryModal onClose={() => setShowModal(false)} />}
+      </AnimatePresence>
     </>
   )
 }
