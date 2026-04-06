@@ -33,7 +33,7 @@ const Logo = ({ variant = 'dark', iconOnly = false, className = '' }: LogoProps)
               lineHeight: 1.1,
             }}
           >
-            Odpocznij
+            Baza
           </div>
           <div
             style={{
@@ -46,7 +46,7 @@ const Logo = ({ variant = 'dark', iconOnly = false, className = '' }: LogoProps)
               lineHeight: 1.4,
             }}
           >
-            Sobie
+            Dla Odpoczynku
           </div>
         </div>
       )}

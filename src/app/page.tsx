@@ -2,8 +2,8 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { motion, useScroll, useTransform } from 'framer-motion'
-import { useRef } from 'react'
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
+import { useRef, useState, useEffect } from 'react'
 import {
   Waves,
   TreePine,
@@ -15,6 +15,10 @@ import {
   Sun,
   Shell,
   Bike,
+  PenLine,
+  CheckCircle,
+  Loader2,
+  X,
 } from 'lucide-react'
 
 /* ─── Dane statyczne ─────────────────────────────────────────── */
@@ -63,35 +67,186 @@ const attractions = [
   },
 ]
 
-const reviews = [
-  {
-    name: 'Anna K.',
-    location: 'Warszawa',
-    stars: 5,
-    text: 'Idealne miejsce na reset. Cisza, szum lasu, morze za płotem — wróciłam wypoczęta jak po tygodniu spa. Właściciel niezwykle pomocny i serdeczny.',
-  },
-  {
-    name: 'Tomasz i Marta N.',
-    location: 'Kraków',
-    stars: 5,
-    text: 'Wracamy tu co rok od 4 lat. Apartament zadbany, czysto, wszystkiego pod dostatkiem. Okolica bajkowa o każdej porze roku.',
-  },
-  {
-    name: 'Ewa Z.',
-    location: 'Poznań',
-    stars: 5,
-    text: 'Wreszcie spokojne wakacje! Dzieci mogły biegać po lesie, my siedzieliśmy z kawą na tarasie i słuchaliśmy ptaków. Polecam całym sercem.',
-  },
-]
+/* ─── Typy opinii ────────────────────────────────────────────── */
+
+interface ReviewItem {
+  id: string
+  name: string
+  location: string
+  rating: number
+  text: string
+}
 
 /* ─── Subkomponenty ──────────────────────────────────────────── */
 
 function StarRating({ count }: { count: number }) {
   return (
     <div className="flex gap-0.5">
-      {Array.from({ length: count }).map((_, i) => (
-        <Star key={i} size={14} fill="#f59e0b" stroke="none" />
+      {Array.from({ length: 5 }).map((_, i) => (
+        <Star key={i} size={14} fill={i < count ? '#f59e0b' : 'none'} stroke={i < count ? 'none' : '#d1d5db'} />
       ))}
+    </div>
+  )
+}
+
+function StarPicker({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+  const [hovered, setHovered] = useState(0)
+  return (
+    <div className="flex gap-1">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <button
+          key={i}
+          type="button"
+          onMouseEnter={() => setHovered(i + 1)}
+          onMouseLeave={() => setHovered(0)}
+          onClick={() => onChange(i + 1)}
+        >
+          <Star
+            size={28}
+            fill={(hovered || value) > i ? '#f59e0b' : 'none'}
+            stroke={(hovered || value) > i ? '#f59e0b' : '#d1d5db'}
+          />
+        </button>
+      ))}
+    </div>
+  )
+}
+
+function ReviewForm({ onClose, onSubmitted }: { onClose: () => void; onSubmitted: () => void }) {
+  const [name, setName] = useState('')
+  const [location, setLocation] = useState('')
+  const [rating, setRating] = useState(0)
+  const [text, setText] = useState('')
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [error, setError] = useState('')
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (rating === 0) { setError('Wybierz ocenę.'); return }
+    setStatus('loading')
+    setError('')
+    try {
+      const res = await fetch('/api/reviews/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, location, rating, text }),
+      })
+      const data = await res.json()
+      if (!res.ok) { setError(data.error ?? 'Błąd.'); setStatus('error'); return }
+      setStatus('success')
+      setTimeout(onSubmitted, 2000)
+    } catch {
+      setError('Problem z połączeniem.')
+      setStatus('error')
+    }
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ backgroundColor: 'rgba(10,31,46,0.6)' }}
+      onClick={e => { if (e.target === e.currentTarget) onClose() }}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 16 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 16 }}
+        transition={{ duration: 0.25, ease: 'easeOut' as const }}
+        className="w-full max-w-lg rounded-3xl p-8 relative"
+        style={{ backgroundColor: '#fff', boxShadow: '0 24px 64px rgba(10,31,46,0.18)' }}
+      >
+        <button
+          onClick={onClose}
+          className="absolute top-5 right-5 p-1.5 rounded-full hover:bg-gray-100 transition-colors"
+        >
+          <X size={18} style={{ color: '#94a3b8' }} />
+        </button>
+
+        {status === 'success' ? (
+          <div className="flex flex-col items-center gap-4 py-8 text-center">
+            <CheckCircle size={48} style={{ color: '#3a8067' }} />
+            <h3 className="text-xl font-bold" style={{ color: '#0d2f45' }}>Dziękujemy!</h3>
+            <p className="text-sm" style={{ color: '#64748b' }}>
+              Twoja opinia zostanie opublikowana po weryfikacji.
+            </p>
+          </div>
+        ) : (
+          <>
+            <h3
+              className="text-xl font-bold mb-1"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#0d2f45' }}
+            >
+              Napisz opinię
+            </h3>
+            <p className="text-sm mb-6" style={{ color: '#64748b' }}>
+              Podziel się wrażeniami z pobytu. Opinia pojawi się po weryfikacji.
+            </p>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold mb-1" style={{ color: '#64748b' }}>Imię *</label>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                    required
+                    placeholder="Jan K."
+                    className="w-full px-3 py-2.5 text-sm rounded-xl border outline-none"
+                    style={{ borderColor: '#e2e8f0', color: '#0d2f45' }}
+                    onFocus={e => (e.currentTarget.style.borderColor = '#124f74')}
+                    onBlur={e => (e.currentTarget.style.borderColor = '#e2e8f0')}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold mb-1" style={{ color: '#64748b' }}>Miasto</label>
+                  <input
+                    type="text"
+                    value={location}
+                    onChange={e => setLocation(e.target.value)}
+                    placeholder="Warszawa"
+                    className="w-full px-3 py-2.5 text-sm rounded-xl border outline-none"
+                    style={{ borderColor: '#e2e8f0', color: '#0d2f45' }}
+                    onFocus={e => (e.currentTarget.style.borderColor = '#124f74')}
+                    onBlur={e => (e.currentTarget.style.borderColor = '#e2e8f0')}
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold mb-2" style={{ color: '#64748b' }}>Ocena *</label>
+                <StarPicker value={rating} onChange={setRating} />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold mb-1" style={{ color: '#64748b' }}>Opinia *</label>
+                <textarea
+                  value={text}
+                  onChange={e => setText(e.target.value)}
+                  required
+                  rows={4}
+                  placeholder="Opisz swój pobyt..."
+                  className="w-full px-3 py-2.5 text-sm rounded-xl border outline-none resize-none"
+                  style={{ borderColor: '#e2e8f0', color: '#0d2f45' }}
+                  onFocus={e => (e.currentTarget.style.borderColor = '#124f74')}
+                  onBlur={e => (e.currentTarget.style.borderColor = '#e2e8f0')}
+                />
+              </div>
+              {error && (
+                <p className="text-sm" style={{ color: '#dc2626' }}>{error}</p>
+              )}
+              <button
+                type="submit"
+                disabled={status === 'loading'}
+                className="w-full py-3 rounded-2xl font-semibold text-sm flex items-center justify-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-60"
+                style={{ backgroundColor: '#124f74', color: '#fff' }}
+              >
+                {status === 'loading'
+                  ? <><Loader2 size={15} className="animate-spin" /> Wysyłanie...</>
+                  : <><PenLine size={15} /> Wyślij opinię</>
+                }
+              </button>
+            </form>
+          </>
+        )}
+      </motion.div>
     </div>
   )
 }
@@ -107,6 +262,16 @@ export default function HomePage() {
     offset: ['start start', 'end start'],
   })
   const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '25%'])
+
+  const [reviews, setReviews] = useState<ReviewItem[]>([])
+  const [showReviewForm, setShowReviewForm] = useState(false)
+
+  useEffect(() => {
+    fetch('/api/reviews/list')
+      .then(r => r.json())
+      .then(d => setReviews(d.reviews ?? []))
+      .catch(() => {})
+  }, [])
 
   return (
     <>
@@ -462,55 +627,80 @@ export default function HomePage() {
             transition={{ duration: 0.6, ease: 'easeOut' as const }}
             className="text-center mb-14"
           >
-            <span
-              className="text-xs font-semibold uppercase tracking-widest"
-              style={{ color: '#3a8067' }}
-            >
+            <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#3a8067' }}>
               Opinie
             </span>
             <h2
               className="mt-2 text-3xl md:text-4xl"
-              style={{
-                fontFamily: "'Playfair Display', Georgia, serif",
-                fontWeight: 700,
-                color: '#0d2f45',
-              }}
+              style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700, color: '#0d2f45' }}
             >
               Co mówią nasi goście
             </h2>
+            <p className="mt-3 text-sm" style={{ color: '#64748b' }}>
+              Byłeś/aś u nas? Podziel się wrażeniami!
+            </p>
+            <button
+              onClick={() => setShowReviewForm(true)}
+              className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-semibold transition-opacity hover:opacity-80"
+              style={{ backgroundColor: '#124f74', color: '#fff' }}
+            >
+              <PenLine size={15} />
+              Napisz opinię
+            </button>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {reviews.map(({ name, location, stars, text }, i) => (
-              <motion.div
-                key={name}
-                initial={{ opacity: 0, y: 28 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: i * 0.12, ease: 'easeOut' as const }}
-                className="flex flex-col gap-4 p-7 rounded-3xl"
-                style={{ backgroundColor: '#f0f9fd', border: '1px solid #ddf0f9' }}
-              >
-                <Quote size={28} style={{ color: '#b3ddf0' }} />
-                <p className="text-sm leading-relaxed flex-grow" style={{ color: '#334155' }}>
-                  {text}
-                </p>
-                <div className="flex items-center justify-between pt-2 border-t" style={{ borderColor: '#ddf0f9' }}>
-                  <div>
-                    <p className="font-semibold text-sm" style={{ color: '#0d2f45' }}>
-                      {name}
-                    </p>
-                    <p className="text-xs" style={{ color: '#94a3b8' }}>
-                      {location}
-                    </p>
+          {reviews.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-16 rounded-3xl"
+              style={{ backgroundColor: '#f0f9fd', border: '1px dashed #b3ddf0' }}
+            >
+              <Quote size={36} style={{ color: '#b3ddf0', margin: '0 auto 12px' }} />
+              <p className="text-sm" style={{ color: '#94a3b8' }}>
+                Bądź pierwszą osobą, która oceni pobyt!
+              </p>
+            </motion.div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {reviews.map((rev, i) => (
+                <motion.div
+                  key={rev.id}
+                  initial={{ opacity: 0, y: 28 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: i * 0.12, ease: 'easeOut' as const }}
+                  className="flex flex-col gap-4 p-7 rounded-3xl"
+                  style={{ backgroundColor: '#f0f9fd', border: '1px solid #ddf0f9' }}
+                >
+                  <Quote size={28} style={{ color: '#b3ddf0' }} />
+                  <p className="text-sm leading-relaxed flex-grow" style={{ color: '#334155' }}>
+                    {rev.text}
+                  </p>
+                  <div className="flex items-center justify-between pt-2 border-t" style={{ borderColor: '#ddf0f9' }}>
+                    <div>
+                      <p className="font-semibold text-sm" style={{ color: '#0d2f45' }}>{rev.name}</p>
+                      {rev.location && (
+                        <p className="text-xs" style={{ color: '#94a3b8' }}>{rev.location}</p>
+                      )}
+                    </div>
+                    <StarRating count={rev.rating} />
                   </div>
-                  <StarRating count={stars} />
-                </div>
-              </motion.div>
-            ))}
-          </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
+
+      <AnimatePresence>
+        {showReviewForm && (
+          <ReviewForm
+            onClose={() => setShowReviewForm(false)}
+            onSubmitted={() => setShowReviewForm(false)}
+          />
+        )}
+      </AnimatePresence>
 
       {/* ══════════════════════════════════════════
           CTA

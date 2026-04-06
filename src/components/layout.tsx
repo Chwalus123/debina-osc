@@ -25,7 +25,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div className="space-y-4">
               <Logo variant="light" />
               <p className="text-sm leading-relaxed" style={{ color: '#7cc2e4', maxWidth: '22rem' }}>
-                Komfortowe apartamenty w malowniczej Dębinie nad Morzem Bałtyckim.
+                Komfortowe apartamenty w malowniczej Dębinie nad Polskim morzem.
                 Cisza, zieleń i morska bryza — idealne miejsce na prawdziwy wypoczynek.
               </p>
             </div>

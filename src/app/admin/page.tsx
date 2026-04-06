@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { LogOut, Loader2, CheckCircle, XCircle, AlertCircle, Clock, Users } from 'lucide-react'
+import { LogOut, Loader2, CheckCircle, XCircle, AlertCircle, Clock, Users, Star, MessageSquare } from 'lucide-react'
 import type { Reservation, WaitlistEntry } from '@/lib/reservations'
+import type { Review } from '@/lib/reviews'
 
 /* ─── Typy ──────────────────────────────────────────────────────────────── */
 
@@ -173,6 +174,7 @@ function LoginForm({ onSuccess }: { onSuccess: () => void }) {
 function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [reservations, setReservations] = useState<Reservation[]>([])
   const [waitlist, setWaitlist] = useState<WaitlistEntry[]>([])
+  const [reviews, setReviews] = useState<Review[]>([])
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null)
@@ -180,14 +182,18 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
   const loadData = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await fetch('/api/admin/reservations')
-      if (res.status === 401) {
-        onLogout()
-        return
+      const [resData, revData] = await Promise.all([
+        fetch('/api/admin/reservations'),
+        fetch('/api/admin/reviews'),
+      ])
+      if (resData.status === 401) { onLogout(); return }
+      const d = await resData.json()
+      setReservations(d.reservations ?? [])
+      setWaitlist(d.waitlist ?? [])
+      if (revData.ok) {
+        const rd = await revData.json()
+        setReviews(rd.reviews ?? [])
       }
-      const data = await res.json()
-      setReservations(data.reservations ?? [])
-      setWaitlist(data.waitlist ?? [])
     } catch {
       setMessage({ text: 'Błąd ładowania danych.', type: 'error' })
     } finally {
@@ -491,6 +497,97 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                       ))}
                     </tbody>
                   </table>
+                </div>
+              )}
+            </section>
+
+            {/* Opinie do moderacji */}
+            <section>
+              <h2 className="font-semibold text-base mb-3 flex items-center gap-2" style={{ color: '#0d2f45' }}>
+                <MessageSquare size={16} />
+                Opinie ({reviews.length})
+              </h2>
+              {reviews.length === 0 ? (
+                <div className="py-12 text-center rounded-2xl text-sm" style={{ backgroundColor: '#fff', border: '1px solid #e2e8f0', color: '#94a3b8' }}>
+                  Brak opinii.
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {reviews.map(rev => (
+                    <div
+                      key={rev.id}
+                      className="flex items-start gap-4 p-4 rounded-2xl"
+                      style={{
+                        backgroundColor: rev.status === 'pending' ? '#fffbeb' : rev.status === 'approved' ? '#f0fdf4' : '#fef2f2',
+                        border: `1px solid ${rev.status === 'pending' ? '#fde68a' : rev.status === 'approved' ? '#bbf7d0' : '#fecaca'}`,
+                      }}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="font-semibold text-sm" style={{ color: '#0d2f45' }}>{rev.name}</span>
+                          {rev.location && <span className="text-xs" style={{ color: '#94a3b8' }}>{rev.location}</span>}
+                          <div className="flex gap-0.5">
+                            {Array.from({ length: 5 }).map((_, i) => (
+                              <Star key={i} size={11} fill={i < rev.rating ? '#f59e0b' : 'none'} stroke={i < rev.rating ? '#f59e0b' : '#d1d5db'} />
+                            ))}
+                          </div>
+                          <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{
+                            backgroundColor: rev.status === 'pending' ? '#fef3c7' : rev.status === 'approved' ? '#dcfce7' : '#fee2e2',
+                            color: rev.status === 'pending' ? '#92400e' : rev.status === 'approved' ? '#166534' : '#b91c1c',
+                          }}>
+                            {rev.status === 'pending' ? 'Oczekująca' : rev.status === 'approved' ? 'Opublikowana' : 'Odrzucona'}
+                          </span>
+                        </div>
+                        <p className="text-sm" style={{ color: '#334155' }}>{rev.text}</p>
+                        <p className="text-xs mt-1" style={{ color: '#94a3b8' }}>{formatDate(rev.createdAt)}</p>
+                      </div>
+                      <div className="flex gap-2 shrink-0">
+                        {rev.status !== 'approved' && (
+                          <button
+                            onClick={async () => {
+                              setActionLoading(rev.id + 'approve')
+                              await fetch('/api/admin/reviews', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ reviewId: rev.id, action: 'approve' }) })
+                              setActionLoading(null)
+                              loadData()
+                            }}
+                            disabled={!!actionLoading}
+                            className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-opacity hover:opacity-80 disabled:opacity-50"
+                            style={{ backgroundColor: '#3a8067', color: '#fff' }}
+                          >
+                            {actionLoading === rev.id + 'approve' ? <Loader2 size={12} className="animate-spin" /> : 'Opublikuj'}
+                          </button>
+                        )}
+                        {rev.status !== 'rejected' && (
+                          <button
+                            onClick={async () => {
+                              setActionLoading(rev.id + 'reject')
+                              await fetch('/api/admin/reviews', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ reviewId: rev.id, action: 'reject' }) })
+                              setActionLoading(null)
+                              loadData()
+                            }}
+                            disabled={!!actionLoading}
+                            className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-opacity hover:opacity-80 disabled:opacity-50"
+                            style={{ backgroundColor: '#dc2626', color: '#fff' }}
+                          >
+                            {actionLoading === rev.id + 'reject' ? <Loader2 size={12} className="animate-spin" /> : 'Odrzuć'}
+                          </button>
+                        )}
+                        <button
+                          onClick={async () => {
+                            setActionLoading(rev.id + 'delete')
+                            await fetch('/api/admin/reviews', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ reviewId: rev.id, action: 'delete' }) })
+                            setActionLoading(null)
+                            loadData()
+                          }}
+                          disabled={!!actionLoading}
+                          className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-opacity hover:opacity-80 disabled:opacity-50"
+                          style={{ backgroundColor: '#e5e7eb', color: '#374151' }}
+                        >
+                          {actionLoading === rev.id + 'delete' ? <Loader2 size={12} className="animate-spin" /> : 'Usuń'}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
             </section>
