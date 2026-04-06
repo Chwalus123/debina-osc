@@ -179,7 +179,7 @@ function ReviewForm({ onClose, onSubmitted }: { onClose: () => void; onSubmitted
               Napisz opinię
             </h3>
             <p className="text-sm mb-6" style={{ color: '#64748b' }}>
-              Podziel się wrażeniami z pobytu. Opinia pojawi się po weryfikacji.
+              Podziel się wrażeniami z pobytu. Opinia pojawi się natychmiast.
             </p>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">

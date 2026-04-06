@@ -19,7 +19,7 @@ export async function createReview(
   const review: Review = {
     ...data,
     id: nanoid(),
-    status: 'pending',
+    status: 'approved',
     createdAt: new Date().toISOString(),
   }
   await kv.set(`review:${review.id}`, JSON.stringify(review))

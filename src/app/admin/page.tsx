@@ -518,8 +518,8 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                       key={rev.id}
                       className="flex items-start gap-4 p-4 rounded-2xl"
                       style={{
-                        backgroundColor: rev.status === 'pending' ? '#fffbeb' : rev.status === 'approved' ? '#f0fdf4' : '#fef2f2',
-                        border: `1px solid ${rev.status === 'pending' ? '#fde68a' : rev.status === 'approved' ? '#bbf7d0' : '#fecaca'}`,
+                        backgroundColor: '#f0fdf4',
+                        border: '1px solid #bbf7d0',
                       }}
                     >
                       <div className="flex-1 min-w-0">
@@ -531,47 +531,14 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                               <Star key={i} size={11} fill={i < rev.rating ? '#f59e0b' : 'none'} stroke={i < rev.rating ? '#f59e0b' : '#d1d5db'} />
                             ))}
                           </div>
-                          <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{
-                            backgroundColor: rev.status === 'pending' ? '#fef3c7' : rev.status === 'approved' ? '#dcfce7' : '#fee2e2',
-                            color: rev.status === 'pending' ? '#92400e' : rev.status === 'approved' ? '#166534' : '#b91c1c',
-                          }}>
-                            {rev.status === 'pending' ? 'Oczekująca' : rev.status === 'approved' ? 'Opublikowana' : 'Odrzucona'}
+                          <span className="text-xs px-2 py-0.5 rounded-full font-medium" style={{ backgroundColor: '#dcfce7', color: '#166534' }}>
+                            Opublikowana
                           </span>
                         </div>
                         <p className="text-sm" style={{ color: '#334155' }}>{rev.text}</p>
                         <p className="text-xs mt-1" style={{ color: '#94a3b8' }}>{formatDate(rev.createdAt)}</p>
                       </div>
-                      <div className="flex gap-2 shrink-0">
-                        {rev.status !== 'approved' && (
-                          <button
-                            onClick={async () => {
-                              setActionLoading(rev.id + 'approve')
-                              await fetch('/api/admin/reviews', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ reviewId: rev.id, action: 'approve' }) })
-                              setActionLoading(null)
-                              loadData()
-                            }}
-                            disabled={!!actionLoading}
-                            className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-opacity hover:opacity-80 disabled:opacity-50"
-                            style={{ backgroundColor: '#3a8067', color: '#fff' }}
-                          >
-                            {actionLoading === rev.id + 'approve' ? <Loader2 size={12} className="animate-spin" /> : 'Opublikuj'}
-                          </button>
-                        )}
-                        {rev.status !== 'rejected' && (
-                          <button
-                            onClick={async () => {
-                              setActionLoading(rev.id + 'reject')
-                              await fetch('/api/admin/reviews', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ reviewId: rev.id, action: 'reject' }) })
-                              setActionLoading(null)
-                              loadData()
-                            }}
-                            disabled={!!actionLoading}
-                            className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-opacity hover:opacity-80 disabled:opacity-50"
-                            style={{ backgroundColor: '#dc2626', color: '#fff' }}
-                          >
-                            {actionLoading === rev.id + 'reject' ? <Loader2 size={12} className="animate-spin" /> : 'Odrzuć'}
-                          </button>
-                        )}
+                      <div className="shrink-0">
                         <button
                           onClick={async () => {
                             setActionLoading(rev.id + 'delete')
@@ -581,7 +548,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                           }}
                           disabled={!!actionLoading}
                           className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-opacity hover:opacity-80 disabled:opacity-50"
-                          style={{ backgroundColor: '#e5e7eb', color: '#374151' }}
+                          style={{ backgroundColor: '#dc2626', color: '#fff' }}
                         >
                           {actionLoading === rev.id + 'delete' ? <Loader2 size={12} className="animate-spin" /> : 'Usuń'}
                         </button>
