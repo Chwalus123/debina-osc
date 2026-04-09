@@ -48,7 +48,7 @@ function ApartmentSelector({
   onChange: (id: AptId) => void
 }) {
   const opts: { id: AptId; name: string; desc: string }[] = [
-    { id: '1', name: 'Apartament A', desc: '4–6 osób · 2 sypialnie' },
+    { id: '1', name: 'Apartament A', desc: '2–4 osób · 1 sypialnie' },
     { id: '2', name: 'Apartament B', desc: '2–4 osoby · 1 sypialnia' },
   ]
 
@@ -383,7 +383,7 @@ export default function ContactPage() {
               color: '#0d2f45',
             }}
           >
-            Kontakt i Rezerwacja
+            Kontakt - Rezerwacje
           </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}
@@ -392,7 +392,7 @@ export default function ContactPage() {
             className="mt-3 text-base"
             style={{ color: '#64748b' }}
           >
-            Wybierz termin w kalendarzu i wyślij prośbę o rezerwację — odpiszemy tego samego dnia.
+            Wybierz termin w kalendarzu i wyślij prośbę o rezerwację — odpiszemy w jak najkrótszym czasie.
           </motion.p>
         </div>
       </section>
@@ -432,7 +432,7 @@ export default function ContactPage() {
                       <Phone size={16} style={{ color: '#124f74' }} />
                     </div>
                     <a href="tel:+48501601881" className="hover:underline" style={{ color: '#124f74' }}>
-                      +48 501 601 881
+                       501 601 881 |  501 013 931
                     </a>
                   </li>
                   <li className="flex items-start gap-3">
@@ -446,7 +446,7 @@ export default function ContactPage() {
                       <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 mt-0.5" style={{ backgroundColor: '#ddf0f9' }}>
                         <MapPin size={16} style={{ color: '#124f74' }} />
                       </div>
-                      <span>ul. Modrzewiowa 29, 76-211 Dębina<br />Wybrzeże Słowińskie, woj. Pomorskie</span>
+                      <span>Dębina, ul. Modrzewiowa 29/44, 76-211<br />Wybrzeże Słowińskie, woj. Pomorskie</span>
                     </a>
                   </li>
                 </ul>

@@ -338,7 +338,7 @@ export default function HomePage() {
               letterSpacing: '-0.02em',
             }}
           >
-            Baza dla twojego odpoczynku
+            Baza dla Twojego odpoczynku
           </motion.h1>
 
           <motion.p

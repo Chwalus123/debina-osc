@@ -102,7 +102,7 @@ export default function GiftCardPage() {
                   className="text-2xl md:text-3xl"
                   style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700 }}
                 >
-                  Baza dla Odpoczynku
+                  Baza dla odpoczynku
                 </h3>
                 <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.75)' }}>
                   Podaruj wypoczynek nad Morzem Bałtyckim — las, morze i&nbsp;cisza
@@ -110,7 +110,7 @@ export default function GiftCardPage() {
                 </p>
                 <div className="mt-auto pt-4 border-t" style={{ borderColor: 'rgba(255,255,255,0.15)' }}>
                   <p className="text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>
-                    Dębina · Pobrzeże Słowińskie · Polska
+                    Dębina · Wybrzeże Słowińskie · Pomorskie
                   </p>
                 </div>
               </div>

@@ -33,8 +33,8 @@ interface GalleryImage {
 
 const apt1 = {
   name: 'Apartament 44 A',
-  tagline: 'ul. Modrzewiowa 29/44A',
-  desc: 'Nowoczesny apartament w stylu loft na pierwszej linii brzegowej. Salon z rozkładaną sofą i w pełni wyposażonym aneksem kuchennym, oddzielna sypialnia oraz balkon — idealne miejsce na wypoczynek dla par i rodzin z dzieckiem. Każdy poranek możesz zacząć od kawy na balkonie, wdychając zapach morskiej bryzy.',
+  tagline: 'Dębina,ul. Modrzewiowa 29/44A',
+  desc: 'Nowoczesny apartament w stylu loft w pierwszej linii brzegowej. Salon z rozkładaną sofą i w pełni wyposażonym aneksem kuchennym, oddzielna sypialnia, łazienka oraz balkon — idealne miejsce na wypoczynek dla par i rodzin z dziećmi. Każdy poranek możesz zacząć od kawy na balkonie, wdychając zapach morskiej bryzy i lasu.',
   guests: '2–4 osoby',
   bedrooms: '1 sypialnia',
   features: [
@@ -43,11 +43,14 @@ const apt1 = {
     'Łazienka z prysznicem',
     'Balkon z miejscem do odpoczynku',
     'Aneks kuchenny: lodówka, zmywarka, mikrofala, dwupalnikowa kuchenka indukcyjna, ekspres do kawy, toster, czajnik bezprzewodowy',
+    'Podstawowe wyposażenie kuchni (sztućce, szkło, garnki, patelnię)',
     'Klimatyzacja',
-    'Bezpłatne Wi-Fi, 2 telewizory',
+    'Bezpłatne Wi-Fi',
+    '2 telewizory',
     'Leżaki, parawan, deska do prasowania, żelazko, suszarka do włosów, pościel',
-    'Bezpłatne miejsce parkingowe poza obiektem',
-    'Apartament dla niepalących · pobyt z pupilami mile widziany',
+    'Bezpłatne niemonitorowane miejsce parkingowe poza obiektem',
+    'Apartament dla niepalących',
+    'Dajemy możliwość pobytu z pupilami',
   ],
   icons: [
     { icon: Users,    label: '2–4 osoby'    },
@@ -55,7 +58,7 @@ const apt1 = {
     { icon: Utensils, label: 'Kuchnia'      },
     { icon: Bath,     label: 'Prysznic'     },
     { icon: Wifi,     label: 'Wi-Fi'        },
-    { icon: Car,      label: 'Parking'      },
+    // { icon: Car,      label: 'Parking'      },
   ],
   gallery: [
     { src: '/img/44a-salon-1.jpg',      alt: 'Salon z aneksem kuchennym'       },
@@ -72,7 +75,7 @@ const apt1 = {
 
 const apt2 = {
   name: 'Apartament 44B',
-  tagline: 'ul. Modrzewiowa 29/44/B',
+  tagline: 'Dębina, ul. Modrzewiowa 29/44/B',
   desc: 'Nowoczesny apartament loft z wyjątkowym atutem — prywatnym tarasem na dachu budynku z panoramicznym widokiem na okolicę. Salon z rozkładaną sofą, oddzielna sypialnia, balkon oraz pełne wyposażenie kuchni z pralką. Dla tych, którzy cenią komfort i chcą odpocząć na własnych warunkach.',
   guests: '2–4 osoby',
   bedrooms: '1 sypialnia',
@@ -83,11 +86,14 @@ const apt2 = {
     'Balkon',
     'Taras na dachu budynku z panoramą okolicy',
     'Aneks kuchenny: pralka, lodówka, zmywarka, mikrofala, dwupalnikowa kuchenka indukcyjna, ekspres do kawy, toster, czajnik bezprzewodowy',
+    'Podstawowe wyposażenie kuchni (sztućce, szkło, garnki, patelnię)',
     'Klimatyzacja',
-    'Bezpłatne Wi-Fi, 2 telewizory',
+    'Bezpłatne Wi-Fi',
+    '2 telewizory',
     'Leżaki, parawan, deska do prasowania, żelazko, suszarka do włosów, pościel',
     'Bezpłatne miejsce parkingowe poza obiektem',
-    'Apartament dla niepalących · pobyt z pupilami mile widziany',
+    'Apartament dla niepalących',
+    'Dajemy możliwość pobytu z pupilami',
   ],
   icons: [
     { icon: Users,    label: '2–4 osoby'   },
@@ -95,7 +101,7 @@ const apt2 = {
     { icon: Utensils, label: 'Kuchnia'      },
     { icon: Bath,     label: 'Prysznic'     },
     { icon: Wifi,     label: 'Wi-Fi'        },
-    { icon: Car,      label: 'Parking'      },
+    // { icon: Car,      label: 'Parking'      },
   ],
   gallery: [
     { src: '/img/44b-salon-1.jpg',      alt: 'Salon z aneksem kuchennym'       },
@@ -123,8 +129,8 @@ const debinaGallery: GalleryImage[] = [
 
 const debinaAttractions = [
   { icon: Shell, label: 'Plaża',          desc: 'ok. 400 m ścieżką przez las'      },
-  { icon: Waves, label: 'Klif do 30 m',  desc: 'Wybrzeże Słowińskie'              },
-  { icon: Trees, label: 'Las Natura 2000', desc: 'Bezpośrednio przy ośrodku'      },
+  { icon: Waves, label: 'Klif 30 m n.p.m',  desc: 'Wybrzeże Słowińskie'              },
+  { icon: Trees, label: 'Las Natura 2000', desc: 'Bezpośrednio przy apartamentach'      },
   { icon: Bike,  label: 'Szlaki',         desc: 'Piesze, rowerowe, paralotniarstwo' },
 ]
 
@@ -657,7 +663,7 @@ export default function ApartmentsPage() {
             </h2>
             <p className="mb-8 text-base" style={{ color: '#7cc2e4' }}>
               Sprawdź wolne terminy i zarezerwuj swój apartament.
-              Odpowiemy w ciągu kilku godzin.
+              Odpowiemy w jak najkrótszym czasie.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link

@@ -40,7 +40,7 @@ export default function MeldunekPage() {
             className="mt-3 text-sm"
             style={{ color: '#64748b' }}
           >
-            Formularz wypełniany jest przez wynajmującego przy zameldowaniu.
+            Formularz należy wypełnić po wpłacie zadatku, do 7 dni przed pobytem.<br/>
             Pobierz i wydrukuj przed przyjazdem.
           </motion.p>
 

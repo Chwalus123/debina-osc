@@ -82,7 +82,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <li className="flex items-center gap-2">
                   <Phone size={15} style={{ color: '#4aa3d4', flexShrink: 0 }} />
                   <a href="tel:+48501601881" className="hover:text-white transition-colors">
-                    501 601 881
+                    501 601 881 | 501 013 931
                   </a>
                 </li>
                 <li className="flex items-start gap-2">
@@ -94,7 +94,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     style={{ color: 'inherit' }}
                   >
                     <MapPin size={15} style={{ color: '#4aa3d4', flexShrink: 0, marginTop: '2px' }} />
-                    <span>ul. Modrzewiowa 29, 76-211 Dębina<br />nad Morzem Bałtyckim</span>
+                    <span>Dębina, ul. Modrzewiowa 29/44, 76-211 </span>
                   </a>
                 </li>
                 {/* TODO: odkomentować po dodaniu profilu na Booking.com

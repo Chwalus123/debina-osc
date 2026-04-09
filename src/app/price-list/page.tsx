@@ -16,32 +16,26 @@ const PRICES_A = [350, 350, 350, 360, 400, 440, 480, 480, 440, 400, 350, 350]
 const PRICES_B = [390, 390, 390, 430, 470, 510, 550, 550, 510, 470, 390, 390]
 
 /* Kolorystyka sezonowa — zgodna ze screenshotem klienta */
-type Season = 'off' | 'spring' | 'summer' | 'peak' | 'autumn'
+type Season = 'off'  | 'peak' 
 
 const SEASON: Season[] = [
   'off','off','off',           // sty, lut, mar
-  'spring','spring',           // kwi, maj
-  'summer',                    // cze
+  'off','off',           // kwi, maj
+  'peak',                    // cze
   'peak','peak',               // lip, sie
-  'autumn',                    // wrz
-  'summer',                    // paź
+  'peak',                    // wrz
+  'off',                    // paź
   'off','off',                 // lis, gru
 ]
 
 const SEASON_STYLE: Record<Season, { bg: string; text: string; border: string }> = {
   off:    { bg: '#f0f9fd', text: '#2280b8', border: '#b3ddf0' },   // najjaśniejszy błękit
-  spring: { bg: '#daf0ea', text: '#2d6651', border: '#b3d6cd' },   // szałwiowy zielony
-  summer: { bg: '#ddf0f9', text: '#124f74', border: '#7cc2e4' },   // średni błękit
   peak:   { bg: '#124f74', text: '#ffffff', border: '#0d2f45' },   // ciemny ocean (szczyt)
-  autumn: { bg: '#e8f4f0', text: '#3a8067', border: '#b3d6cd' },   // delikatny szałwia
 }
 
 const LEGEND: { season: Season; label: string }[] = [
-  { season: 'off',    label: 'Poza sezonem (I–III, XI–XII)' },
-  { season: 'spring', label: 'Wiosna (IV–V)'                },
-  { season: 'summer', label: 'Lato / Jesień (VI, X)'        },
-  { season: 'peak',   label: 'Sezon szczytowy (VII–VIII)'    },
-  { season: 'autumn', label: 'Wrzesień'                     },
+  { season: 'off',    label: 'Poza sezonem' },
+  { season: 'peak',   label: 'Sezon wypoczynkowy (VII–VIII)'    },
 ]
 
 /* ─── Komponent komórki ceny ─────────────────────────────────── */
@@ -381,9 +375,9 @@ export default function PricingPage() {
             >
               <Info size={16} style={{ color: '#2280b8', flexShrink: 0, marginTop: '2px' }} />
               <div className="space-y-1 text-xs leading-relaxed">
-                <p>Podane ceny dotyczą jednej doby noclegowej (check-in 14:00, check-out 10:00).</p>
-                <p>Minimalny czas najmu: <strong>3 doby noclegowe</strong>. Zadatek: 25% wartości pobytu w ciągu 3 dni od rezerwacji.</p>
-                <p>Opłata klimatyczna pobierana jest gotówką przy zameldowaniu (wg stawki gminy Ustka).</p>
+                <p>Podane ceny dotyczą jednej doby noclegowej (check-in 16:00, check-out 10:00).</p>
+                <p>Minimalny czas najmu: <strong>4 doby noclegowe</strong>.</p>
+                <p>Opłata klimatyczna płatna w dzień meldunku — gotówką, blikiem lub przelewem (wg stawki gminy Ustka).</p>
               </div>
             </div>
 
