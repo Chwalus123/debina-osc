@@ -453,7 +453,7 @@ export default function ApartmentsPage() {
           HERO — PAGE HEADER
       ══════════════════════════════════════════ */}
       <section
-        className="relative py-24 px-4 text-white"
+        className="relative py-40 px-4 text-white"
         style={{
           backgroundImage: "linear-gradient(to bottom, rgba(10,31,46,0.6) 0%, rgba(10,31,46,0.45) 60%, rgba(10,31,46,0.75) 100%), url('/img/44b-taras-widok-1.jpg')",
           backgroundSize: 'cover',
