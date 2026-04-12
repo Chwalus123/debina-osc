@@ -616,6 +616,103 @@ export default function HomePage() {
       </section>
 
       {/* ══════════════════════════════════════════
+          ATRAKCJE W OKOLICY
+      ══════════════════════════════════════════ */}
+      <section className="py-20 px-4" style={{ backgroundColor: '#f0f9fd' }}>
+        <div className="container mx-auto max-w-6xl">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: 'easeOut' as const }}
+            className="text-center mb-12"
+          >
+            <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#3a8067' }}>
+              Okolica
+            </span>
+            <h2 className="mt-2 text-3xl md:text-4xl" style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700, color: '#0d2f45' }}>
+              Ciekawe miejsca w pobliżu
+            </h2>
+            <p className="mt-3 max-w-2xl mx-auto text-sm md:text-base" style={{ color: '#64748b' }}>
+              Atrakcje turystyczne w pobliżu naszych apartamentów
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
+            {[
+              { dist: '~400 m',   label: 'Plaża w Dębinie',                        desc: 'Ścieżkami spacerowymi przez las dębowo-grabowy Natura 2000' },
+              { dist: '~2 km',    label: 'Wrak duńskiego torpedowca w Poddąbiu',   desc: 'Wyprawa piesza plażą' },
+              { dist: '~4,8 km',  label: 'Wieża widokowa nad jeziorem Gardno',     desc: 'Wyprawa piesza' },
+              { dist: '~5 km',    label: 'Punkt widokowy na "Kamienisko"',         desc: 'Ze szczytu klifu można dostrzec podwodne głazy, o które rozbijały się statki' },
+              { dist: '~5 km',    label: 'Most – kładka nad wąwozem Poddąbie',     desc: 'Wyprawa piesza' },
+              { dist: '~5 km',    label: 'Kościół św. Apostołów Piotra i Pawła w Rowach', desc: '' },
+              { dist: '~6 km',    label: 'Słowiński Park Narodowy',               desc: '' },
+              { dist: '~13,5 km', label: 'Zatopiony las koło Czołpina',           desc: 'Trasa rowerowa' },
+              { dist: '~19 km',   label: 'Ustka — port, promenada, Latarnia morska, Bunkry Blüchera', desc: '' },
+              { dist: '~35 km',   label: 'Wydma Łącka – Łeba',                   desc: 'Trasa rowerowa' },
+              { dist: '~47 km',   label: 'Aquapark Jarosławiec',                  desc: '' },
+            ].map(({ dist, label, desc }, i) => (
+              <motion.div
+                key={label}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: i * 0.05, ease: 'easeOut' as const }}
+                className="flex items-start gap-4 p-4 rounded-2xl bg-white"
+                style={{ border: '1px solid #ddf0f9' }}
+              >
+                <span
+                  className="shrink-0 px-2.5 py-1 rounded-lg text-xs font-bold"
+                  style={{ backgroundColor: '#124f74', color: '#fff', minWidth: '60px', textAlign: 'center' }}
+                >
+                  {dist}
+                </span>
+                <div>
+                  <p className="font-semibold text-sm" style={{ color: '#0d2f45' }}>{label}</p>
+                  {desc && <p className="text-xs mt-0.5" style={{ color: '#94a3b8' }}>{desc}</p>}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Trasy spacerowe */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, ease: 'easeOut' as const }}
+          >
+            <h3 className="font-semibold text-lg mb-4" style={{ color: '#0d2f45' }}>
+              Rekomendowane trasy spacerowe
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {[
+                { name: 'Pętla Dębina – Poddąbie', dist: '~3,3 km', time: '1–2 godz.', desc: 'Trasa łącząca Dębinę z Poddąbiem — zróżnicowane krajobrazy klifowe i leśne.' },
+                { name: 'Szlak do Rowów',           dist: '~5 km',   time: 'ok. 1,5 godz.', desc: 'Kierunek wschodni — wysokie klify, piaszczyste wydmy, widoki na morze.' },
+                { name: 'Szlak "Zwiniętych Torów"', dist: 'Ustka–Rowy', time: 'czerwony szlak', desc: 'Historyczny czerwony szlak łączący Ustkę z Rowami wzdłuż wybrzeża.' },
+              ].map(({ name, dist, time, desc }) => (
+                <div
+                  key={name}
+                  className="p-5 rounded-2xl bg-white"
+                  style={{ border: '1px solid #ddf0f9' }}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <MapPin size={15} style={{ color: '#3a8067' }} />
+                    <p className="font-semibold text-sm" style={{ color: '#0d2f45' }}>{name}</p>
+                  </div>
+                  <div className="flex gap-3 mb-2">
+                    <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: '#daf0ea', color: '#2d6651' }}>{dist}</span>
+                    <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: '#ddf0f9', color: '#124f74' }}>{time}</span>
+                  </div>
+                  <p className="text-xs leading-relaxed" style={{ color: '#64748b' }}>{desc}</p>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
           OPINIE GOŚCI
       ══════════════════════════════════════════ */}
       <section className="py-20 px-4">

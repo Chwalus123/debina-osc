@@ -381,6 +381,31 @@ export default function PricingPage() {
               </div>
             </div>
 
+            {/* Opłaty dodatkowe */}
+            <div className="mt-6">
+              <h3 className="font-semibold text-sm mb-3" style={{ color: '#0d2f45' }}>Opłaty dodatkowe</h3>
+              <div className="overflow-x-auto rounded-2xl" style={{ border: '1px solid #e2e8f0' }}>
+                <table className="w-full text-sm bg-white">
+                  <thead>
+                    <tr style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                      <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: '#64748b' }}>Usługa</th>
+                      <th className="text-right px-4 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: '#64748b' }}>Cena</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
+                      <td className="px-4 py-3 text-sm" style={{ color: '#334155' }}>Opłata dodatkowa za pupila</td>
+                      <td className="px-4 py-3 text-sm font-semibold text-right whitespace-nowrap" style={{ color: '#0d2f45' }}>25 zł / doba</td>
+                    </tr>
+                    <tr>
+                      <td className="px-4 py-3 text-sm" style={{ color: '#334155' }}>Wypożyczenie ręczników</td>
+                      <td className="px-4 py-3 text-sm font-semibold text-right whitespace-nowrap" style={{ color: '#0d2f45' }}>50 zł / szt. za pobyt</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
             {/* CTA */}
             <div className="flex flex-col sm:flex-row gap-3 mt-8">
               <Link

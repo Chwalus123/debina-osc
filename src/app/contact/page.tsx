@@ -289,6 +289,15 @@ export default function ContactPage() {
   const [errorMsg, setErrorMsg] = useState('')
   const [reservationId, setReservationId] = useState<string | null>(null)
   const [showWaitlist, setShowWaitlist] = useState(false)
+  const [consent, setConsent] = useState(false)
+  const [captchaA, setCaptchaA] = useState(0)
+  const [captchaB, setCaptchaB] = useState(0)
+  const [captchaInput, setCaptchaInput] = useState('')
+
+  useEffect(() => {
+    setCaptchaA(Math.floor(Math.random() * 9) + 1)
+    setCaptchaB(Math.floor(Math.random() * 9) + 1)
+  }, [])
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -310,6 +319,18 @@ export default function ContactPage() {
 
     if (!dateRange) {
       setErrorMsg('Proszę wybrać termin pobytu w kalendarzu.')
+      setStatus('error')
+      return
+    }
+
+    if (!consent) {
+      setErrorMsg('Proszę zaznaczyć zgodę na przetwarzanie danych.')
+      setStatus('error')
+      return
+    }
+
+    if (parseInt(captchaInput) !== captchaA + captchaB) {
+      setErrorMsg('Błędna odpowiedź na pytanie weryfikacyjne.')
       setStatus('error')
       return
     }
@@ -351,6 +372,10 @@ export default function ContactPage() {
       setStatus('success')
       setFormData({ name: '', email: '', phone: '', guests: '', message: '' })
       setDateRange(null)
+      setConsent(false)
+      setCaptchaInput('')
+      setCaptchaA(Math.floor(Math.random() * 9) + 1)
+      setCaptchaB(Math.floor(Math.random() * 9) + 1)
     } catch {
       setErrorMsg('Problem z połączeniem. Sprawdź internet lub napisz bezpośrednio na email.')
       setStatus('error')
@@ -447,6 +472,41 @@ export default function ContactPage() {
                         <MapPin size={16} style={{ color: '#124f74' }} />
                       </div>
                       <span>Dębina, ul. Modrzewiowa 29/44, 76-211<br />Wybrzeże Słowińskie, woj. Pomorskie</span>
+                    </a>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: '#ddf0f9' }}>
+                      {/* Facebook */}
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="#124f74" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                      </svg>
+                    </div>
+                    <a
+                      href="https://www.facebook.com/bazadlaodpoczynku"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:underline text-sm"
+                      style={{ color: '#124f74' }}
+                    >
+                      Facebook
+                    </a>
+                  </li>
+                  <li className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: '#ddf0f9' }}>
+                      {/* Booking.com */}
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="24" height="24" rx="4" fill="#003580" opacity="0"/>
+                        <text x="3" y="17" fontFamily="Arial, sans-serif" fontWeight="bold" fontSize="14" fill="#124f74">B.</text>
+                      </svg>
+                    </div>
+                    <a
+                      href="https://www.booking.com/hotel/pl/baza-dla-odpoczynku-debina.pl.html"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:underline text-sm"
+                      style={{ color: '#124f74' }}
+                    >
+                      Booking.com
                     </a>
                   </li>
                 </ul>
@@ -694,6 +754,46 @@ export default function ContactPage() {
                           onBlur={e => e.currentTarget.style.borderColor = '#e2e8f0'}
                         />
                       </div>
+
+                      {/* Captcha */}
+                      <div
+                        className="p-4 rounded-xl"
+                        style={{ backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}
+                      >
+                        <label className="block text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: '#64748b' }}>
+                          Nie jestem robotem
+                        </label>
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm font-medium" style={{ color: '#0d2f45' }}>
+                            {captchaA} + {captchaB} =
+                          </span>
+                          <input
+                            type="number"
+                            value={captchaInput}
+                            onChange={e => setCaptchaInput(e.target.value)}
+                            required
+                            placeholder="?"
+                            className="w-20 px-3 py-2 text-sm rounded-xl border outline-none text-center"
+                            style={{ borderColor: '#e2e8f0', color: '#0d2f45' }}
+                            onFocus={e => e.currentTarget.style.borderColor = '#124f74'}
+                            onBlur={e => e.currentTarget.style.borderColor = '#e2e8f0'}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Zgoda */}
+                      <label className="flex items-start gap-3 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={consent}
+                          onChange={e => setConsent(e.target.checked)}
+                          className="mt-0.5 shrink-0 accent-[#124f74]"
+                        />
+                        <span className="text-xs leading-relaxed" style={{ color: '#64748b' }}>
+                          Wysyłając formularz wyrażasz zgodę na przetwarzanie twoich danych i akceptujesz{' '}
+                          <Link href="/terms" className="underline hover:text-slate-600">regulamin wynajmu</Link>.
+                        </span>
+                      </label>
 
                       {/* Błąd */}
                       {(status === 'error' || status === 'conflict') && !showWaitlist && (
