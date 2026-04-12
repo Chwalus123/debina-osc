@@ -9,8 +9,6 @@ import {
   Bath,
   Wifi,
   Car,
-  Trees,
-  Waves,
   Users,
   BedDouble,
   CheckCircle2,
@@ -18,8 +16,6 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
-  Bike,
-  Shell,
 } from 'lucide-react'
 
 /* ─── Typy ───────────────────────────────────────────────────── */
@@ -128,21 +124,6 @@ const apt2 = {
   ] as GalleryImage[],
 }
 
-const debinaGallery: GalleryImage[] = [
-  { src: '/img/1000002722.jpg',  alt: 'Leśna ścieżka do morza wiosną'   },
-  { src: '/img/DSC02495.JPG',    alt: 'Plaża z klifem w Dębinie'        },
-  { src: '/img/DSC02500.JPG',    alt: 'Wybrzeże Bałtyku'                },
-  { src: '/img/DSC02480.JPG',    alt: 'Fale Morza Bałtyckiego'         },
-  { src: '/img/1000002723.png',  alt: 'Las bukowy w Dębinie'            },
-  { src: '/img/DSC02445.JPG',    alt: 'Wieczorna ścieżka nad morzem'    },
-]
-
-const debinaAttractions = [
-  { icon: Shell, label: 'Plaża',          desc: 'ok. 400 m ścieżką przez las'      },
-  { icon: Waves, label: 'Klif 30 m n.p.m',  desc: 'Wybrzeże Słowińskie'              },
-  { icon: Trees, label: 'Las Natura 2000', desc: 'Bezpośrednio przy apartamentach'      },
-  { icon: Bike,  label: 'Szlaki',         desc: 'Piesze, rowerowe, paralotniarstwo' },
-]
 
 /* ─── Karuzela apartamentu ──────────────────────────────────── */
 
@@ -357,52 +338,6 @@ function Lightbox({
 
 /* ─── Galeria miniatur ───────────────────────────────────────── */
 
-function Gallery({ images }: { images: GalleryImage[] }) {
-  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null)
-
-  return (
-    <>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-        {images.map((img, i) => (
-          <motion.button
-            key={i}
-            initial={{ opacity: 0, scale: 0.97 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: i * 0.08, ease: 'easeOut' as const }}
-            onClick={() => setLightboxIdx(i)}
-            className="group relative overflow-hidden focus:outline-none focus-visible:ring-2"
-            style={{ borderRadius: '1rem', aspectRatio: '4/3' }}
-            aria-label={`Otwórz zdjęcie: ${img.alt}`}
-          >
-            <Image
-              src={img.src}
-              alt={img.alt}
-              fill
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
-              sizes="(max-width: 768px) 50vw, 33vw"
-            />
-            <div
-              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3"
-              style={{ background: 'linear-gradient(to top, rgba(10,31,46,0.6), transparent)' }}
-            >
-              <span className="text-xs text-white font-medium">{img.alt}</span>
-            </div>
-          </motion.button>
-        ))}
-      </div>
-
-      {lightboxIdx !== null && (
-        <Lightbox
-          images={images}
-          startIndex={lightboxIdx}
-          onClose={() => setLightboxIdx(null)}
-        />
-      )}
-    </>
-  )
-}
-
 /* ─── Karta apartamentu ──────────────────────────────────────── */
 
 function ApartmentCard({
@@ -520,8 +455,8 @@ export default function ApartmentsPage() {
       <section className="relative overflow-hidden py-24 px-4 text-white">
         <div className="absolute inset-0 -z-10">
           <Image
-            src="/img/1000002722.jpg"
-            alt="Dębina"
+            src="/img/44b-taras-widok-1.jpg"
+            alt="Panorama z tarasu"
             fill
             priority
             quality={85}
@@ -570,69 +505,6 @@ export default function ApartmentsPage() {
             Dwa nowoczesne apartamenty loft w pierwszej linii brzegowej Dębiny —
             każdy z własną kuchnią, łazienką, balkonem i klimatyzacją.
           </motion.p>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════
-          DĘBINA — GALERIA I ATRAKCJE
-      ══════════════════════════════════════════ */}
-      <section className="py-20 px-4" style={{ backgroundColor: '#f0f9fd' }}>
-        <div className="container mx-auto max-w-6xl">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: 'easeOut' as const }}
-            className="text-center mb-10"
-          >
-            <span
-              className="text-xs font-semibold uppercase tracking-widest"
-              style={{ color: '#3a8067' }}
-            >
-              Okolica
-            </span>
-            <h2
-              className="mt-2 text-3xl md:text-4xl"
-              style={{
-                fontFamily: "'Playfair Display', Georgia, serif",
-                fontWeight: 700,
-                color: '#0d2f45',
-              }}
-            >
-              Dębina i atrakcje
-            </h2>
-            <p className="mt-3 max-w-lg mx-auto text-sm md:text-base" style={{ color: '#64748b' }}>
-              Maleńka wieś na Wybrzeżu Słowińskim między Rowami a Ustką — wysoki klif,
-              piaszczysta plaża, lasy Natura 2000. Obiekt posiada miejsce na rowery,
-              plac zabaw dla najmłodszych i bezpośrednie wyjście na ścieżkę ku klifowi i plaży.
-            </p>
-          </motion.div>
-
-          {/* Ikony atrakcji */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-            {debinaAttractions.map(({ icon: Icon, label, desc }, i) => (
-              <motion.div
-                key={label}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.08, ease: 'easeOut' as const }}
-                className="flex flex-col items-center gap-2 p-5 rounded-2xl bg-white text-center shadow-sm"
-              >
-                <div
-                  className="w-11 h-11 rounded-xl flex items-center justify-center"
-                  style={{ backgroundColor: '#ddf0f9' }}
-                >
-                  <Icon size={20} style={{ color: '#124f74' }} />
-                </div>
-                <p className="font-semibold text-sm" style={{ color: '#0d2f45' }}>{label}</p>
-                <p className="text-xs" style={{ color: '#94a3b8' }}>{desc}</p>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Galeria Dębiny */}
-          <Gallery images={debinaGallery} />
         </div>
       </section>
 
