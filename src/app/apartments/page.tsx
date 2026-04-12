@@ -452,25 +452,14 @@ export default function ApartmentsPage() {
       {/* ══════════════════════════════════════════
           HERO — PAGE HEADER
       ══════════════════════════════════════════ */}
-      <section className="relative overflow-hidden py-24 px-4 text-white">
-        <div className="absolute inset-0 -z-10">
-          <Image
-            src="/img/44b-taras-widok-1.jpg"
-            alt="Panorama z tarasu"
-            fill
-            priority
-            quality={85}
-            className="object-cover"
-            sizes="100vw"
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                'linear-gradient(to bottom, rgba(10,31,46,0.6) 0%, rgba(10,31,46,0.45) 60%, rgba(10,31,46,0.75) 100%)',
-            }}
-          />
-        </div>
+      <section
+        className="relative py-24 px-4 text-white"
+        style={{
+          backgroundImage: "linear-gradient(to bottom, rgba(10,31,46,0.6) 0%, rgba(10,31,46,0.45) 60%, rgba(10,31,46,0.75) 100%), url('/img/44b-taras-widok-1.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
 
         <div className="container mx-auto max-w-4xl text-center">
           <motion.span
