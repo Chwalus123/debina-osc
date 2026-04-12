@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Download, ArrowLeft } from 'lucide-react'
 
-export default function MeldunekPage() {
+export default function FormularzZakwaterowaniaPage() {
   return (
     <>
       {/* NAGŁÓWEK */}
@@ -31,7 +31,7 @@ export default function MeldunekPage() {
               color: '#0d2f45',
             }}
           >
-            Formularz — Meldunek Pobytu
+            Formularz zakwaterowania i pobytu
           </motion.h1>
           <motion.p
             initial={{ opacity: 0 }}
@@ -40,8 +40,9 @@ export default function MeldunekPage() {
             className="mt-3 text-sm"
             style={{ color: '#64748b' }}
           >
-            Formularz należy wypełnić po wpłacie zadatku, do 7 dni przed pobytem.<br/>
-            Pobierz i wydrukuj przed przyjazdem.
+            Warunkiem wydania kluczy jest płatność z góry za usługę najpóźniej w przeddzień przyjazdu
+            oraz podanie niezbędnych danych do zakwaterowania w apartamentach wypełniając Formularz
+            zakwaterowania – wymóg administracyjno-prawny.
           </motion.p>
 
           {/* Przyciski */}
@@ -52,8 +53,8 @@ export default function MeldunekPage() {
             className="flex flex-col sm:flex-row gap-3 justify-center mt-6"
           >
             <a
-              href="/meldunek.pdf"
-              download="karta-meldunek-pobytu.pdf"
+              href="/formularz-zakwaterowania.pdf"
+              download="formularz-zakwaterowania-i-pobytu.pdf"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl font-semibold text-sm transition-all hover:opacity-90"
               style={{ backgroundColor: '#124f74', color: '#fff' }}
             >
@@ -83,18 +84,18 @@ export default function MeldunekPage() {
             style={{ border: '1px solid #e2e8f0', boxShadow: '0 2px 16px rgba(10,31,46,0.07)' }}
           >
             <iframe
-              src="/meldunek.pdf"
+              src="/formularz-zakwaterowania.pdf"
               className="w-full"
               style={{ height: '80vh', border: 'none' }}
-              title="Formularz meldunkowy"
+              title="Formularz zakwaterowania i pobytu"
             />
           </motion.div>
 
           <p className="mt-4 text-xs text-center" style={{ color: '#94a3b8' }}>
             Jeśli formularz nie wyświetla się poprawnie,{' '}
             <a
-              href="/meldunek.pdf"
-              download="karta-meldunek-pobytu.pdf"
+              href="/formularz-zakwaterowania.pdf"
+              download="formularz-zakwaterowania-i-pobytu.pdf"
               className="underline hover:text-slate-600"
             >
               pobierz PDF bezpośrednio

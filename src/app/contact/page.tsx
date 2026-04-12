@@ -512,7 +512,7 @@ export default function ContactPage() {
                 </ul>
               </div>
 
-              {/* Karta meldunkowa */}
+              {/* Formularz zakwaterowania */}
               <div
                 className="p-7 rounded-3xl"
                 style={{ backgroundColor: '#f0faf6', border: '1px solid #b3d6cd' }}
@@ -520,15 +520,17 @@ export default function ContactPage() {
                 <div className="flex items-center gap-2 mb-2">
                   <Download size={16} style={{ color: '#2d6651' }} />
                   <h3 className="font-semibold text-sm" style={{ color: '#1a3028' }}>
-                    Karta Meldunkowa
+                    Formularz zakwaterowania i pobytu
                   </h3>
                 </div>
                 <p className="text-xs mb-4" style={{ color: '#3a5045' }}>
-                  Pobierz formularz meldunkowy wymagany przy zameldowaniu.
+                  Warunkiem wydania kluczy jest płatność z góry za usługę najpóźniej w przeddzień
+                  przyjazdu oraz podanie niezbędnych danych wypełniając Formularz zakwaterowania
+                  – wymóg administracyjno-prawny.
                 </p>
                 <a
-                  href="/meldunek.pdf"
-                  download="karta-meldunek-pobytu.pdf"
+                  href="/formularz-zakwaterowania.pdf"
+                  download="formularz-zakwaterowania-i-pobytu.pdf"
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-xs transition-opacity hover:opacity-90"
                   style={{ backgroundColor: '#2d6651', color: '#fff' }}
                 >
