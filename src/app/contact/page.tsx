@@ -732,7 +732,7 @@ export default function ContactPage() {
                             style={{ borderColor: '#e2e8f0', color: '#0d2f45' }}
                           >
                             <option value="">Wybierz</option>
-                            {[1, 2, 3, 4, 5, 6].map(n => (
+                            {[1, 2, 3, 4].map(n => (
                               <option key={n} value={n}>{n} {n === 1 ? 'osoba' : n < 5 ? 'osoby' : 'osób'}</option>
                             ))}
                           </select>

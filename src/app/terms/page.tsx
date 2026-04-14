@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { FileText, Download } from 'lucide-react'
+import { FileText } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 
 const sections = [
@@ -147,22 +147,6 @@ export default function TermsPage() {
             Apartamenty nad morzem · Dębina ul. Modrzewiowa 29 44A/44B · 76-211 Dębina<br />
             Administrator apartamentów tel: 501-601-881 / 501-013-931
           </motion.p>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.3, ease: 'easeOut' as const }}
-            className="mt-4"
-          >
-            <a
-              href="/regulamin-wynajmu.pdf"
-              download="regulamin-wynajmu-bazadlaodpoczynku.pdf"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-xs transition-opacity hover:opacity-90"
-              style={{ backgroundColor: '#124f74', color: '#fff' }}
-            >
-              <Download size={13} />
-              Pobierz PDF
-            </a>
-          </motion.div>
         </div>
       </section>
 
