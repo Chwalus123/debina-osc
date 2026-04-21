@@ -114,13 +114,31 @@ export async function deleteReservation(id: string): Promise<void> {
   await kv.set('res:list', list.filter(i => i !== id))
 }
 
+async function getIcalSlots(
+  aptId: '1' | '2',
+): Promise<Array<{ start: string; end: string; status: ReservationStatus }>> {
+  try {
+    const raw = await kv.get<string>(`ical:${aptId}`)
+    if (!raw) return []
+    const data = typeof raw === 'string' ? JSON.parse(raw) : (raw as { slots: Array<{ start: string; end: string; status: ReservationStatus }> })
+    return data.slots ?? []
+  } catch {
+    return []
+  }
+}
+
 export async function getBlockedSlots(
   aptId: '1' | '2',
 ): Promise<Array<{ start: string; end: string; status: ReservationStatus }>> {
-  const all = await getAllReservations()
-  return all
-    .filter(r => r.aptId === aptId && (r.status === 'pending' || r.status === 'confirmed'))
-    .map(r => ({ start: r.startDate, end: r.endDate, status: r.status }))
+  const [local, ical] = await Promise.all([
+    getAllReservations().then(all =>
+      all
+        .filter(r => r.aptId === aptId && (r.status === 'pending' || r.status === 'confirmed'))
+        .map(r => ({ start: r.startDate, end: r.endDate, status: r.status })),
+    ),
+    getIcalSlots(aptId),
+  ])
+  return [...local, ...ical]
 }
 
 /* ─── Konflikt dat ──────────────────────────────────────────────────────── */

@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/booking/ical-sync",
+      "schedule": "0 * * * *"
+    }
+  ]
+}
