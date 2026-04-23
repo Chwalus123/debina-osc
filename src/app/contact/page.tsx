@@ -48,7 +48,7 @@ function ApartmentSelector({
   onChange: (id: AptId) => void
 }) {
   const opts: { id: AptId; name: string; desc: string }[] = [
-    { id: '1', name: 'Apartament A', desc: '2–4 osób · 1 sypialnie' },
+    { id: '1', name: 'Apartament A', desc: '2–4 osoby · 1 sypialnia' },
     { id: '2', name: 'Apartament B', desc: '2–4 osoby · 1 sypialnia' },
   ]
 
@@ -319,6 +319,12 @@ export default function ContactPage() {
 
     if (!dateRange) {
       setErrorMsg('Proszę wybrać termin pobytu w kalendarzu.')
+      setStatus('error')
+      return
+    }
+
+    if (nightsCount < 4) {
+      setErrorMsg('Minimalny pobyt to 4 noce. Wybierz dłuższy termin.')
       setStatus('error')
       return
     }
@@ -631,7 +637,18 @@ export default function ContactPage() {
                             if (status === 'conflict') setStatus('idle')
                           }}
                         />
-                        {dateRange && (
+                        {dateRange && nightsCount < 4 && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 6 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="mt-3 flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium"
+                            style={{ backgroundColor: '#fef3c7', border: '1px solid #fde68a', color: '#92400e' }}
+                          >
+                            <AlertCircle size={15} style={{ color: '#d97706' }} />
+                            Minimalny pobyt to 4 noce. Wybierz dłuższy termin.
+                          </motion.div>
+                        )}
+                        {dateRange && nightsCount >= 4 && (
                           <motion.div
                             initial={{ opacity: 0, y: 6 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -640,11 +657,9 @@ export default function ContactPage() {
                           >
                             <CheckCircle size={15} style={{ color: '#2d6651' }} />
                             {formatDate(dateRange[0])} → {formatDate(dateRange[1])}
-                            {nightsCount > 0 && (
-                              <span className="ml-auto text-xs" style={{ color: '#3a5045' }}>
-                                {nightsCount} {nightsCount === 1 ? 'noc' : nightsCount < 5 ? 'noce' : 'nocy'}
-                              </span>
-                            )}
+                            <span className="ml-auto text-xs" style={{ color: '#3a5045' }}>
+                              {nightsCount} {nightsCount === 1 ? 'noc' : nightsCount < 5 ? 'noce' : 'nocy'}
+                            </span>
                           </motion.div>
                         )}
 
