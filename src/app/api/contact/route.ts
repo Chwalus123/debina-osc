@@ -100,7 +100,7 @@ export async function POST(request: Request) {
 
     const contactEmail = process.env.CONTACT_EMAIL ?? 'odpocznijspokojnie@gmail.com'
 
-    /* ── Wysyłka (jeśli SMTP skonfigurowany) ── */
+    /* ── Wysyłka — błąd emaila nie blokuje odpowiedzi ── */
     if (process.env.SMTP_USER && process.env.SMTP_PASS) {
       const transporter = nodemailer.createTransport({
         host:   process.env.SMTP_HOST ?? 'smtp.gmail.com',
@@ -112,8 +112,7 @@ export async function POST(request: Request) {
         },
       })
 
-      await Promise.all([
-        /* Do właściciela */
+      Promise.all([
         transporter.sendMail({
           from:    `"Baza dla Odpoczynku" <${process.env.SMTP_USER}>`,
           to:      contactEmail,
@@ -121,19 +120,15 @@ export async function POST(request: Request) {
           subject: `Zapytanie o rezerwację — ${name} · ${aptLabel}`,
           html:    ownerHtml,
         }),
-        /* Potwierdzenie dla gościa */
         transporter.sendMail({
           from:    `"Baza dla Odpoczynku" <${process.env.SMTP_USER}>`,
           to:      email,
           subject: 'Potwierdzenie zapytania — Baza dla Odpoczynku',
           html:    guestHtml,
         }),
-      ])
+      ]).catch(err => console.error('[contact] Błąd wysyłki emaila:', err))
     } else {
-      /* Tryb deweloperski — loguj zamiast wysyłać */
-      console.info('[contact] SMTP nie skonfigurowany. Zapytanie:', {
-        name, email, apartment, startDate, endDate,
-      })
+      console.info('[contact] SMTP nie skonfigurowany. Zapytanie:', { name, email, apartment })
     }
 
     return NextResponse.json({ success: true })

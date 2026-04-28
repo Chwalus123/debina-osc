@@ -78,11 +78,11 @@ export async function POST(request: Request) {
     const confirmUrl = `${baseUrl}/api/booking/action?token=${confirmToken}`
     const cancelUrl = `${baseUrl}/api/booking/action?token=${cancelToken}`
 
-    /* Wyślij emaile */
-    await Promise.all([
+    /* Wyślij emaile — błąd emaila nie blokuje rezerwacji */
+    Promise.all([
       sendReservationRequest(reservation),
       sendOwnerNotification(reservation, confirmUrl, cancelUrl),
-    ])
+    ]).catch(err => console.error('[booking/reserve] Błąd wysyłki emaila:', err))
 
     return NextResponse.json({ success: true, reservationId: reservation.id })
   } catch (error) {
