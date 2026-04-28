@@ -112,7 +112,7 @@ export async function POST(request: Request) {
         },
       })
 
-      Promise.all([
+      const emailResults = await Promise.allSettled([
         transporter.sendMail({
           from:    `"Baza dla Odpoczynku" <${process.env.SMTP_USER}>`,
           to:      contactEmail,
@@ -126,7 +126,12 @@ export async function POST(request: Request) {
           subject: 'Potwierdzenie zapytania — Baza dla Odpoczynku',
           html:    guestHtml,
         }),
-      ]).catch(err => console.error('[contact] Błąd wysyłki emaila:', err))
+      ])
+      emailResults.forEach((r, i) => {
+        if (r.status === 'rejected') {
+          console.error(`[contact] Email ${i} nie wysłany:`, r.reason)
+        }
+      })
     } else {
       console.info('[contact] SMTP nie skonfigurowany. Zapytanie:', { name, email, apartment })
     }
