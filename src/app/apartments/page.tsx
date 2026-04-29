@@ -137,12 +137,14 @@ function ApartmentCarousel({ images }: { images: GalleryImage[] }) {
     return () => clearInterval(id)
   }, [images.length, isPaused, resetKey])
 
-  /* Przescrolluj aktywną miniaturę do widoku */
+  /* Przescrolluj aktywną miniaturę do widoku — tylko wewnątrz paska, bez ruszania strony */
   useEffect(() => {
     const el = thumbsRef.current
     if (!el) return
     const thumb = el.children[current] as HTMLElement | undefined
-    thumb?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
+    if (!thumb) return
+    const target = thumb.offsetLeft - el.clientWidth / 2 + thumb.offsetWidth / 2
+    el.scrollTo({ left: target, behavior: 'smooth' })
   }, [current])
 
   const goTo = (i: number) => { setCurrent(i); setResetKey(k => k + 1) }
@@ -515,7 +517,7 @@ export default function ApartmentsPage() {
       <section
         className="relative py-40 px-4 text-white"
         style={{
-          backgroundImage: "linear-gradient(to bottom, rgba(10,31,46,0.6) 0%, rgba(10,31,46,0.45) 60%, rgba(10,31,46,0.75) 100%), url('/img/44b-taras-widok-1.jpg')",
+          backgroundImage: "linear-gradient(to bottom, rgba(10,31,46,0.6) 0%, rgba(10,31,46,0.45) 60%, rgba(10,31,46,0.75) 100%), url('/img/11.G.taras.jpg')",
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
