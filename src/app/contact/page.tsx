@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Calendar from 'react-calendar'
 import 'react-calendar/dist/Calendar.css'
@@ -94,6 +94,8 @@ function BookingCalendar({
 }) {
   const [slots, setSlots] = useState<BookingSlot[]>([])
   const [loadingCal, setLoadingCal] = useState(false)
+  const [isSelecting, setIsSelecting] = useState(false)
+  const calendarRef = useRef<HTMLDivElement>(null)
 
   const loadSlots = useCallback(async (aptId: AptId) => {
     setLoadingCal(true)
@@ -112,6 +114,19 @@ function BookingCalendar({
   useEffect(() => {
     loadSlots(apartmentId)
   }, [apartmentId, loadSlots])
+
+  /* Klik poza kalendarz podczas wybierania → anuluj */
+  useEffect(() => {
+    if (!isSelecting) return
+    const onMouseDown = (e: MouseEvent) => {
+      if (!calendarRef.current?.contains(e.target as Node)) {
+        setIsSelecting(false)
+        onRangeChange(null)
+      }
+    }
+    document.addEventListener('mousedown', onMouseDown)
+    return () => document.removeEventListener('mousedown', onMouseDown)
+  }, [isSelecting, onRangeChange])
 
   const getSlotForDate = (date: Date): BookingSlot | null => {
     const ts = date.getTime()
@@ -133,16 +148,28 @@ function BookingCalendar({
     return slot.status === 'confirmed' ? 'cal-confirmed' : 'cal-pending'
   }
 
+  const handleClickDay = () => {
+    if (!isSelecting) {
+      setIsSelecting(true)
+    }
+  }
+
   const handleChange = (value: Date | [Date | null, Date | null] | null) => {
+    setIsSelecting(false)
     if (Array.isArray(value) && value[0] instanceof Date && value[1] instanceof Date) {
-      onRangeChange([value[0], value[1]])
+      /* Dwukrotny klik tego samego dnia → anuluj wybór */
+      if (value[0].getTime() === value[1].getTime()) {
+        onRangeChange(null)
+      } else {
+        onRangeChange([value[0], value[1]])
+      }
     } else {
       onRangeChange(null)
     }
   }
 
   return (
-    <div className="relative">
+    <div ref={calendarRef} className="relative">
       <style>{`
         .react-calendar__tile.cal-pending { background: #fef3c7 !important; }
         .react-calendar__tile.cal-confirmed { background: #fee2e2 !important; }
@@ -150,6 +177,15 @@ function BookingCalendar({
         .react-calendar__tile.cal-pending:focus { background: #fde68a !important; }
         .react-calendar__tile.cal-confirmed:hover,
         .react-calendar__tile.cal-confirmed:focus { background: #fca5a5 !important; }
+        .react-calendar__navigation button:focus,
+        .react-calendar__navigation button:focus-visible {
+          outline: none !important;
+          background-color: transparent !important;
+          box-shadow: none !important;
+        }
+        .react-calendar__navigation button:enabled:hover {
+          background-color: #f0f9fd !important;
+        }
       `}</style>
       {loadingCal && (
         <div className="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-white/70">
@@ -158,6 +194,7 @@ function BookingCalendar({
       )}
       <Calendar
         onChange={(value) => handleChange(value as Date | [Date | null, Date | null] | null)}
+        onClickDay={handleClickDay}
         value={selectedRange ?? undefined}
         selectRange
         minDate={new Date()}
