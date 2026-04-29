@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {
   Utensils,
   Bath,
@@ -29,7 +29,7 @@ interface GalleryImage {
 
 const apt1 = {
   name: 'Apartament 44 A',
-  tagline: 'Dębina,ul. Modrzewiowa 29/44A',
+  tagline: 'Dębina, ul. Modrzewiowa 29/44A',
   desc: 'Nowoczesny apartament w stylu loft w pierwszej linii brzegowej. Salon z rozkładaną sofą i w pełni wyposażonym aneksem kuchennym, oddzielna sypialnia, łazienka oraz balkon — idealne miejsce na wypoczynek dla par i rodzin z dziećmi. Każdy poranek możesz zacząć od kawy na balkonie, wdychając zapach morskiej bryzy i lasu.',
   guests: '2–4 osoby',
   bedrooms: '1 sypialnia',
@@ -51,29 +51,28 @@ const apt1 = {
     'Dajemy możliwość pobytu z pupilami',
   ],
   icons: [
-    { icon: Users,    label: '2–4 osoby'    },
+    { icon: Users,     label: '2–4 osoby'   },
     { icon: BedDouble, label: '1 sypialnia' },
-    { icon: Utensils, label: 'Kuchnia'      },
-    { icon: Bath,     label: 'Prysznic'     },
-    { icon: Wifi,     label: 'Wi-Fi'        },
-    // { icon: Car,      label: 'Parking'      },
+    { icon: Utensils,  label: 'Kuchnia'     },
+    { icon: Bath,      label: 'Prysznic'    },
+    { icon: Wifi,      label: 'Wi-Fi'       },
   ],
   gallery: [
-    { src: '/img/44a-salon-1.jpg',      alt: 'Salon z aneksem kuchennym'       },
-    { src: '/img/44a-salon-2.jpg',      alt: 'Salon — widok na jadalnię'       },
-    { src: '/img/44a-salon-3.jpg',      alt: 'Salon — strefa wypoczynku'       },
-    { src: '/img/44a-sypialnia-1.jpg',  alt: 'Sypialnia'                       },
-    { src: '/img/44a-sypialnia-2.jpg',  alt: 'Sypialnia — widok 2'             },
-    { src: '/img/44a-sypialnia-3.jpg',  alt: 'Sypialnia — widok 3'             },
-    { src: '/img/44a-sypialnia-4.jpg',  alt: 'Sypialnia — widok 4'             },
-    { src: '/img/44a-lazienka-1.jpg',   alt: 'Łazienka z prysznicem'           },
-    { src: '/img/44a-lazienka-2.jpg',   alt: 'Łazienka — detal'               },
+    { src: '/img/15.D.salonzaneksem.jpg',                alt: 'Salon z aneksem kuchennym'        },
+    { src: '/img/16.D.salonzaneksem.jpg',                alt: 'Salon z aneksem — widok 2'        },
+    { src: '/img/17.D.salonzaneksem.jpg',                alt: 'Salon z aneksem — widok 3'        },
+    { src: '/img/18.D.sypialnia.jpg',                    alt: 'Sypialnia'                        },
+    { src: '/img/19.D.sypialnia.jpg',                    alt: 'Sypialnia — widok 2'              },
+    { src: '/img/20.D.sypialnia.jpg',                    alt: 'Sypialnia — widok 3'              },
+    { src: '/img/21.D.%C5%82azienka.jpg',                alt: 'Łazienka z prysznicem'            },
+    { src: '/img/22.D.balkon.jpg',                       alt: 'Balkon'                           },
+    { src: '/img/23.D.balkonwidok%20na%20plac%20zabaw.jpg', alt: 'Balkon — widok na plac zabaw' },
   ] as GalleryImage[],
 }
 
 const apt2 = {
   name: 'Apartament 44B',
-  tagline: 'Dębina, ul. Modrzewiowa 29/44/B',
+  tagline: 'Dębina, ul. Modrzewiowa 29/44B',
   desc: 'Nowoczesny apartament loft z wyjątkowym atutem — prywatnym tarasem na dachu budynku z panoramicznym widokiem na okolicę. Salon z rozkładaną sofą, oddzielna sypialnia, łazienka, balkon oraz pełne wyposażenie kuchni z pralką. Dla tych, którzy cenią komfort i chcą odpocząć na własnych warunkach.',
   guests: '2–4 osoby',
   bedrooms: '1 sypialnia',
@@ -96,43 +95,74 @@ const apt2 = {
     'Dajemy możliwość pobytu z pupilami',
   ],
   icons: [
-    { icon: Users,    label: '2–4 osoby'   },
+    { icon: Users,     label: '2–4 osoby'   },
     { icon: BedDouble, label: '1 sypialnia' },
-    { icon: Utensils, label: 'Kuchnia'      },
-    { icon: Bath,     label: 'Prysznic'     },
-    { icon: Wifi,     label: 'Wi-Fi'        },
-    // { icon: Car,      label: 'Parking'      },
+    { icon: Utensils,  label: 'Kuchnia'     },
+    { icon: Bath,      label: 'Prysznic'    },
+    { icon: Wifi,      label: 'Wi-Fi'       },
+    { icon: Car,       label: 'Parking'     },
   ],
   gallery: [
-    { src: '/img/44b-salon-1.jpg',      alt: 'Salon z aneksem kuchennym'       },
-    { src: '/img/44b-salon-2.jpg',      alt: 'Salon — widok na jadalnię'       },
-    { src: '/img/44b-salon-3.jpg',      alt: 'Salon — strefa wypoczynku'       },
-    { src: '/img/44b-sypialnia-2.jpg',  alt: 'Sypialnia'                       },
-    { src: '/img/44b-sypialnia-3.jpg',  alt: 'Sypialnia — widok 2'             },
-    { src: '/img/44b-sypialnia-4.jpg',  alt: 'Sypialnia — widok 3'             },
-    { src: '/img/44b-sypialnia-5.jpg',  alt: 'Sypialnia — widok 4'             },
-    { src: '/img/44b-lazienka-1.jpg',   alt: 'Łazienka z prysznicem'           },
-    { src: '/img/44b-lazienka-2.jpg',   alt: 'Łazienka — widok 2'             },
-    { src: '/img/44b-lazienka-3.jpg',   alt: 'Łazienka — widok 3'             },
-    { src: '/img/44b-lazienka-4.jpg',   alt: 'Łazienka — detal'               },
-    { src: '/img/44b-taras-1.jpg',      alt: 'Taras na dachu'                  },
-    { src: '/img/44b-taras-2.jpg',      alt: 'Taras na dachu — widok 2'        },
-    { src: '/img/44b-taras-3.jpg',      alt: 'Taras na dachu — widok 3'        },
-    { src: '/img/44b-taras-4.jpg',      alt: 'Taras na dachu — widok 4'        },
-    { src: '/img/44b-taras-widok-1.jpg', alt: 'Panorama z tarasu'              },
-    { src: '/img/44b-taras-widok-2.jpg', alt: 'Panorama z tarasu — widok 2'   },
+    { src: '/img/1.G.wej%C5%9Bcie.JPG',         alt: 'Wejście do apartamentu'     },
+    { src: '/img/2.G.wej%C5%9Bcie.jpg',          alt: 'Wejście — widok 2'          },
+    { src: '/img/3.G.salonzaneksem.jpg',          alt: 'Salon z aneksem kuchennym'  },
+    { src: '/img/4.G.salonzaneksem.jpg',          alt: 'Salon z aneksem — widok 2'  },
+    { src: '/img/5.G.salonzaneksem.jpg',          alt: 'Salon z aneksem — widok 3'  },
+    { src: '/img/6.G.sypialnia.jpg',              alt: 'Sypialnia'                  },
+    { src: '/img/7.G.sypialnia.jpg',              alt: 'Sypialnia — widok 2'        },
+    { src: '/img/8.G.sypialnia.jpg',              alt: 'Sypialnia — widok 3'        },
+    { src: '/img/9.G.%C5%82azienka.jpg',          alt: 'Łazienka'                   },
+    { src: '/img/10.G.wej%C5%9Bcietaras.jpg',     alt: 'Wejście na taras'           },
+    { src: '/img/11.G.taras.jpg',                 alt: 'Taras na dachu'             },
+    { src: '/img/12.G.taras.jpg',                 alt: 'Taras — widok 2'            },
+    { src: '/img/13.G.taras.jpg',                 alt: 'Taras — widok 3'            },
+    { src: '/img/14.G.taras.jpg',                 alt: 'Taras — widok 4'            },
   ] as GalleryImage[],
 }
-
 
 /* ─── Karuzela apartamentu ──────────────────────────────────── */
 
 function ApartmentCarousel({ images }: { images: GalleryImage[] }) {
-  const [current, setCurrent] = useState(0)
+  const [current, setCurrent]         = useState(0)
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null)
+  const [isPaused, setIsPaused]       = useState(false)
+  const [resetKey, setResetKey]       = useState(0)
+  const [thumbScroll, setThumbScroll] = useState(0)
+  const thumbsRef = useRef<HTMLDivElement>(null)
 
-  const prev = () => setCurrent(i => (i - 1 + images.length) % images.length)
-  const next = () => setCurrent(i => (i + 1) % images.length)
+  /* Auto-scroll co 4 sekundy */
+  useEffect(() => {
+    if (isPaused) return
+    const id = setInterval(() => setCurrent(i => (i + 1) % images.length), 4000)
+    return () => clearInterval(id)
+  }, [images.length, isPaused, resetKey])
+
+  /* Przescrolluj aktywną miniaturę do widoku */
+  useEffect(() => {
+    const el = thumbsRef.current
+    if (!el) return
+    const thumb = el.children[current] as HTMLElement | undefined
+    thumb?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
+  }, [current])
+
+  const goTo = (i: number) => { setCurrent(i); setResetKey(k => k + 1) }
+  const prev = () => goTo((current - 1 + images.length) % images.length)
+  const next = () => goTo((current + 1) % images.length)
+
+  const handleThumbsScroll = () => {
+    const el = thumbsRef.current
+    if (!el) return
+    const max = el.scrollWidth - el.clientWidth
+    if (max > 0) setThumbScroll(el.scrollLeft / max)
+  }
+
+  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const el = thumbsRef.current
+    if (!el) return
+    const val = parseFloat(e.target.value)
+    el.scrollLeft = val * (el.scrollWidth - el.clientWidth)
+    setThumbScroll(val)
+  }
 
   return (
     <>
@@ -140,6 +170,8 @@ function ApartmentCarousel({ images }: { images: GalleryImage[] }) {
       <div
         className="relative overflow-hidden"
         style={{ borderRadius: '1.5rem', aspectRatio: '4/3' }}
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
       >
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
@@ -147,7 +179,7 @@ function ApartmentCarousel({ images }: { images: GalleryImage[] }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3, ease: 'easeOut' as const }}
+            transition={{ duration: 0.35, ease: 'easeOut' as const }}
             className="absolute inset-0 cursor-zoom-in"
             onClick={() => setLightboxIdx(current)}
           >
@@ -158,7 +190,6 @@ function ApartmentCarousel({ images }: { images: GalleryImage[] }) {
               className="object-cover"
               sizes="(max-width: 1024px) 100vw, 50vw"
             />
-            {/* Gradienty dla czytelności UI */}
             <div
               className="absolute inset-x-0 top-0 h-14 pointer-events-none"
               style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.38), transparent)' }}
@@ -178,17 +209,17 @@ function ApartmentCarousel({ images }: { images: GalleryImage[] }) {
           {current + 1} / {images.length}
         </div>
 
-        {/* Podpowiedź */}
+        {/* Podpis */}
         <div
-          className="absolute bottom-3 left-3 z-10 text-xs font-medium select-none"
+          className="absolute bottom-5 left-3 z-10 text-xs font-medium select-none"
           style={{ color: 'rgba(255,255,255,0.72)' }}
         >
           {images[current].alt}
         </div>
 
-        {/* Przycisk "powiększ" */}
+        {/* Podpowiedź powiększenia */}
         <div
-          className="absolute bottom-3 right-3 z-10 text-xs select-none"
+          className="absolute bottom-5 right-3 z-10 text-xs select-none"
           style={{ color: 'rgba(255,255,255,0.55)' }}
         >
           kliknij, aby powiększyć
@@ -213,35 +244,79 @@ function ApartmentCarousel({ images }: { images: GalleryImage[] }) {
         >
           <ChevronRight size={20} />
         </button>
+
+        {/* Pasek postępu auto-scroll */}
+        <div
+          className="absolute bottom-0 left-0 right-0 h-0.5 z-10"
+          style={{ backgroundColor: 'rgba(255,255,255,0.15)' }}
+        >
+          {!isPaused && (
+            <motion.div
+              key={`${current}-${resetKey}`}
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 4, ease: 'linear' as const }}
+              className="h-full w-full origin-left"
+              style={{ backgroundColor: 'rgba(255,255,255,0.65)' }}
+            />
+          )}
+        </div>
       </div>
 
-      {/* Pasek miniatur */}
-      <div className="flex gap-2 mt-3 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
-        {images.map((img, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrent(i)}
-            aria-label={img.alt}
-            className="relative flex-shrink-0 overflow-hidden transition-all duration-200 focus:outline-none"
+      {/* Miniaturki + suwak */}
+      <div className="mt-3">
+        {/* Pasek miniatur */}
+        <div
+          ref={thumbsRef}
+          className="flex gap-2 overflow-x-auto pb-1"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          onScroll={handleThumbsScroll}
+        >
+          {images.map((img, i) => (
+            <button
+              key={i}
+              onClick={() => goTo(i)}
+              aria-label={img.alt}
+              className="relative flex-shrink-0 overflow-hidden transition-all duration-200 focus:outline-none"
+              style={{
+                width: '72px',
+                height: '54px',
+                borderRadius: '0.625rem',
+                outline: i === current ? '2.5px solid #2280b8' : '2.5px solid transparent',
+                outlineOffset: '1px',
+                opacity: i === current ? 1 : 0.55,
+                transform: i === current ? 'scale(1.04)' : 'scale(1)',
+              }}
+            >
+              <Image
+                src={img.src}
+                alt={img.alt}
+                fill
+                className="object-cover"
+                sizes="72px"
+              />
+            </button>
+          ))}
+        </div>
+
+        {/* Suwak scrolla */}
+        <div className="mt-2 px-0.5">
+          <input
+            type="range"
+            min={0}
+            max={1}
+            step={0.001}
+            value={thumbScroll}
+            onChange={handleSliderChange}
+            className="w-full cursor-pointer"
             style={{
-              width: '72px',
-              height: '54px',
-              borderRadius: '0.625rem',
-              outline: i === current ? '2.5px solid #2280b8' : '2.5px solid transparent',
-              outlineOffset: '1px',
-              opacity: i === current ? 1 : 0.55,
-              transform: i === current ? 'scale(1.04)' : 'scale(1)',
+              height: '4px',
+              accentColor: '#2280b8',
+              appearance: 'auto',
             }}
-          >
-            <Image
-              src={img.src}
-              alt={img.alt}
-              fill
-              className="object-cover"
-              sizes="72px"
-            />
-          </button>
-        ))}
+            aria-label="Przewijaj zdjęcia"
+          />
+        </div>
       </div>
 
       {lightboxIdx !== null && (
@@ -279,7 +354,6 @@ function Lightbox({
       style={{ backgroundColor: 'rgba(10,31,46,0.92)', backdropFilter: 'blur(8px)' }}
       onClick={onClose}
     >
-      {/* Zamknij */}
       <button
         onClick={onClose}
         className="absolute top-4 right-4 p-2 rounded-full text-white hover:bg-white/10 transition-colors"
@@ -288,7 +362,6 @@ function Lightbox({
         <X size={24} />
       </button>
 
-      {/* Strzałka lewo */}
       <button
         onClick={e => { e.stopPropagation(); prev() }}
         className="absolute left-4 p-3 rounded-full text-white hover:bg-white/10 transition-colors"
@@ -297,7 +370,6 @@ function Lightbox({
         <ChevronLeft size={28} />
       </button>
 
-      {/* Zdjęcie */}
       <motion.div
         key={idx}
         initial={{ opacity: 0, scale: 0.96 }}
@@ -316,7 +388,6 @@ function Lightbox({
         />
       </motion.div>
 
-      {/* Strzałka prawo */}
       <button
         onClick={e => { e.stopPropagation(); next() }}
         className="absolute right-4 p-3 rounded-full text-white hover:bg-white/10 transition-colors"
@@ -325,7 +396,6 @@ function Lightbox({
         <ChevronRight size={28} />
       </button>
 
-      {/* Licznik */}
       <p
         className="absolute bottom-4 left-1/2 -translate-x-1/2 text-xs font-medium"
         style={{ color: 'rgba(255,255,255,0.6)' }}
@@ -335,8 +405,6 @@ function Lightbox({
     </motion.div>
   )
 }
-
-/* ─── Galeria miniatur ───────────────────────────────────────── */
 
 /* ─── Karta apartamentu ──────────────────────────────────────── */
 
@@ -350,7 +418,6 @@ function ApartmentCard({
   return (
     <section className="py-20 px-4">
       <div className="container mx-auto max-w-6xl">
-        {/* Nagłówek */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -376,8 +443,7 @@ function ApartmentCard({
           </h2>
         </motion.div>
 
-        {/* Opis + ikony */}
-        <div className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-12 ${reversed ? 'lg:flex-row-reverse' : ''}`}>
+        <div className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-12`}>
           <motion.div
             initial={{ opacity: 0, x: reversed ? 24 : -24 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -389,7 +455,6 @@ function ApartmentCard({
               {apt.desc}
             </p>
 
-            {/* Ikony cech */}
             <div className="grid grid-cols-3 gap-3 mb-8">
               {apt.icons.map(({ icon: Icon, label }) => (
                 <div
@@ -405,7 +470,6 @@ function ApartmentCard({
               ))}
             </div>
 
-            {/* Lista wyposażenia */}
             <ul className="space-y-2">
               {apt.features.map(f => (
                 <li key={f} className="flex items-start gap-2.5 text-sm" style={{ color: '#4a5568' }}>
@@ -428,7 +492,6 @@ function ApartmentCard({
             </Link>
           </motion.div>
 
-          {/* Karuzela zdjęć */}
           <motion.div
             initial={{ opacity: 0, x: reversed ? -24 : 24 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -449,9 +512,6 @@ function ApartmentCard({
 export default function ApartmentsPage() {
   return (
     <>
-      {/* ══════════════════════════════════════════
-          HERO — PAGE HEADER
-      ══════════════════════════════════════════ */}
       <section
         className="relative py-40 px-4 text-white"
         style={{
@@ -460,7 +520,6 @@ export default function ApartmentsPage() {
           backgroundPosition: 'center',
         }}
       >
-
         <div className="container mx-auto max-w-4xl text-center">
           <motion.span
             initial={{ opacity: 0, y: 20 }}
@@ -469,7 +528,7 @@ export default function ApartmentsPage() {
             className="inline-block mb-3 text-xs font-semibold uppercase tracking-widest"
             style={{ color: '#7cc2e4' }}
           >
-            Apartamenty na wynajem 
+            Apartamenty na wynajem
           </motion.span>
           <motion.h1
             initial={{ opacity: 0, y: 24 }}
@@ -497,24 +556,14 @@ export default function ApartmentsPage() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════
-          APARTAMENT 1
-      ══════════════════════════════════════════ */}
       <ApartmentCard apt={apt1} />
 
-      {/* Separator */}
       <div className="mx-auto max-w-6xl px-4">
         <hr style={{ borderColor: '#e2e8f0' }} />
       </div>
 
-      {/* ══════════════════════════════════════════
-          APARTAMENT 2
-      ══════════════════════════════════════════ */}
       <ApartmentCard apt={apt2} reversed />
 
-      {/* ══════════════════════════════════════════
-          CTA
-      ══════════════════════════════════════════ */}
       <section
         className="py-20 px-4 text-center"
         style={{ backgroundColor: '#0a1f2e' }}
