@@ -532,7 +532,7 @@ export default function ContactPage() {
                       </svg>
                     </div>
                     <a
-                      href="https://www.booking.com/hotel/pl/baza-dla-odpoczynku-debina.pl.html"
+                      href="https://www.booking.com/hotel/pl/debina-ul-modrzewiowa-29-44.pl.html?aid=304142&label=gen173nr-10CAEoggI46AdIM1gEaLYBiAEBmAEzuAEXyAEM2AED6AEB-AEBiAIBqAIBuAKDl8fPBsACAdICJDBiODNjYTEyLWViYTQtNGRlOS05MzIyLTlhNmVlMmViNjliNNgCAeACAQ&sid=95e753ea7ec9c209b0cc4d34d364601a"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="hover:underline text-sm"
