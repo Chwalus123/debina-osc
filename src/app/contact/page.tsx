@@ -94,7 +94,6 @@ function BookingCalendar({
 }) {
   const [slots, setSlots] = useState<BookingSlot[]>([])
   const [loadingCal, setLoadingCal] = useState(false)
-  const [isSelecting, setIsSelecting] = useState(false)
   const calendarRef = useRef<HTMLDivElement>(null)
 
   const loadSlots = useCallback(async (aptId: AptId) => {
@@ -115,18 +114,16 @@ function BookingCalendar({
     loadSlots(apartmentId)
   }, [apartmentId, loadSlots])
 
-  /* Klik poza kalendarz podczas wybierania → anuluj */
+  /* Klik poza kalendarz → odznacz wybór */
   useEffect(() => {
-    if (!isSelecting) return
     const onMouseDown = (e: MouseEvent) => {
       if (!calendarRef.current?.contains(e.target as Node)) {
-        setIsSelecting(false)
         onRangeChange(null)
       }
     }
     document.addEventListener('mousedown', onMouseDown)
     return () => document.removeEventListener('mousedown', onMouseDown)
-  }, [isSelecting, onRangeChange])
+  }, [onRangeChange])
 
   const getSlotForDate = (date: Date): BookingSlot | null => {
     const ts = date.getTime()
@@ -148,14 +145,7 @@ function BookingCalendar({
     return slot.status === 'confirmed' ? 'cal-confirmed' : 'cal-pending'
   }
 
-  const handleClickDay = () => {
-    if (!isSelecting) {
-      setIsSelecting(true)
-    }
-  }
-
   const handleChange = (value: Date | [Date | null, Date | null] | null) => {
-    setIsSelecting(false)
     if (Array.isArray(value) && value[0] instanceof Date && value[1] instanceof Date) {
       /* Dwukrotny klik tego samego dnia → anuluj wybór */
       if (value[0].getTime() === value[1].getTime()) {
@@ -194,7 +184,6 @@ function BookingCalendar({
       )}
       <Calendar
         onChange={(value) => handleChange(value as Date | [Date | null, Date | null] | null)}
-        onClickDay={handleClickDay}
         value={selectedRange ?? undefined}
         selectRange
         minDate={new Date()}
