@@ -100,7 +100,6 @@ const apt2 = {
     { icon: Utensils,  label: 'Kuchnia'     },
     { icon: Bath,      label: 'Prysznic'    },
     { icon: Wifi,      label: 'Wi-Fi'       },
-    { icon: Car,       label: 'Parking'     },
   ],
   gallery: [
     { src: '/img/1.G.wej%C5%9Bcie.JPG',         alt: 'Wejście do apartamentu'     },
