@@ -2,7 +2,7 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 import { NextResponse } from 'next/server'
-import { kv } from '@vercel/kv'
+import { kv } from '@/lib/kv'
 import { parseIcal } from '@/lib/ical'
 
 const ICAL_URLS: Record<'1' | '2', string> = {

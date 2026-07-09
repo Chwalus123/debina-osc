@@ -87,11 +87,18 @@ function reservationTable(res: Reservation): string {
 }
 
 async function maybeSend(opts: nodemailer.SendMailOptions): Promise<void> {
-  if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    console.info('[booking-emails] SMTP nie skonfigurowany. Pomijam email:', opts.subject)
+    return
+  }
+  /* Wysyłka emaila to najlepszy-wysiłek: ewentualny błąd (zła konfiguracja
+   * SMTP, chwilowa awaria) NIE może blokować kluczowej akcji — utworzenia
+   * rezerwacji ani jej potwierdzenia/anulowania. Logujemy i kontynuujemy. */
+  try {
     const t = createTransporter()
     await t.sendMail(opts)
-  } else {
-    console.info('[booking-emails] SMTP nie skonfigurowany. Email:', opts.subject)
+  } catch (err) {
+    console.error('[booking-emails] Nie udało się wysłać emaila:', opts.subject, err)
   }
 }
 

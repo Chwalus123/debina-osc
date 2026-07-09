@@ -3,7 +3,7 @@ export const runtime = 'nodejs'
 import { NextResponse } from 'next/server'
 import { getAllReservations } from '@/lib/reservations'
 import { isAdminAuthenticated } from '@/lib/admin-auth'
-import { kv } from '@vercel/kv'
+import { kv } from '@/lib/kv'
 import type { WaitlistEntry } from '@/lib/reservations'
 
 export async function GET() {

@@ -17,6 +17,9 @@
 /.next/
 /out/
 
+# lokalny magazyn KV (fallback developmentu, patrz src/lib/kv.ts)
+/.data/
+
 # production
 /build
 
