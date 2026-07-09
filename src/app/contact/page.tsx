@@ -128,9 +128,9 @@ function BookingCalendar({
 
   const tileClassName = ({ date, view }: { date: Date; view: string }): string => {
     if (view !== 'month') return ''
-    const slot = getSlotForDate(date)
-    if (!slot) return ''
-    return slot.status === 'confirmed' ? 'cal-confirmed' : 'cal-pending'
+    /* Każdy zajęty termin (rezerwacja ze strony lub z Booking.com/iCal)
+     * oznaczamy jednolicie — delikatny czerwony, bez rozróżniania statusu. */
+    return getSlotForDate(date) ? 'cal-reserved' : ''
   }
 
   const handleChange = (value: Date | [Date | null, Date | null] | null) => {
@@ -149,12 +149,12 @@ function BookingCalendar({
   return (
     <div className="relative">
       <style>{`
-        .react-calendar__tile.cal-pending { background: #fef3c7 !important; }
-        .react-calendar__tile.cal-confirmed { background: #fee2e2 !important; }
-        .react-calendar__tile.cal-pending:hover,
-        .react-calendar__tile.cal-pending:focus { background: #fde68a !important; }
-        .react-calendar__tile.cal-confirmed:hover,
-        .react-calendar__tile.cal-confirmed:focus { background: #fca5a5 !important; }
+        /* Zajęty termin — delikatny czerwony, czytelny także na kafelku disabled */
+        .react-calendar__tile.cal-reserved,
+        .react-calendar__tile.cal-reserved:disabled {
+          background: #fcdcdc !important;
+          color: #9c5555 !important;
+        }
         .react-calendar__navigation button:focus,
         .react-calendar__navigation button:focus-visible {
           outline: none !important;
@@ -182,12 +182,8 @@ function BookingCalendar({
       {slots.length > 0 && (
         <div className="mt-3 flex flex-wrap gap-3">
           <div className="flex items-center gap-1.5 text-xs" style={{ color: '#64748b' }}>
-            <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: '#fef3c7', border: '1px solid #fde68a' }} />
-            Oczekująca
-          </div>
-          <div className="flex items-center gap-1.5 text-xs" style={{ color: '#64748b' }}>
-            <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: '#fee2e2', border: '1px solid #fca5a5' }} />
-            Potwierdzona
+            <div className="w-4 h-4 rounded-sm" style={{ backgroundColor: '#fcdcdc', border: '1px solid #f3b4b4' }} />
+            Termin zajęty
           </div>
         </div>
       )}
