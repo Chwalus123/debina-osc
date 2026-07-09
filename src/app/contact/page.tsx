@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Calendar from 'react-calendar'
 import 'react-calendar/dist/Calendar.css'
@@ -94,7 +94,6 @@ function BookingCalendar({
 }) {
   const [slots, setSlots] = useState<BookingSlot[]>([])
   const [loadingCal, setLoadingCal] = useState(false)
-  const calendarRef = useRef<HTMLDivElement>(null)
 
   const loadSlots = useCallback(async (aptId: AptId) => {
     setLoadingCal(true)
@@ -113,17 +112,6 @@ function BookingCalendar({
   useEffect(() => {
     loadSlots(apartmentId)
   }, [apartmentId, loadSlots])
-
-  /* Klik poza kalendarz → odznacz wybór */
-  useEffect(() => {
-    const onMouseDown = (e: MouseEvent) => {
-      if (!calendarRef.current?.contains(e.target as Node)) {
-        onRangeChange(null)
-      }
-    }
-    document.addEventListener('mousedown', onMouseDown)
-    return () => document.removeEventListener('mousedown', onMouseDown)
-  }, [onRangeChange])
 
   const getSlotForDate = (date: Date): BookingSlot | null => {
     const ts = date.getTime()
@@ -159,7 +147,7 @@ function BookingCalendar({
   }
 
   return (
-    <div ref={calendarRef} className="relative">
+    <div className="relative">
       <style>{`
         .react-calendar__tile.cal-pending { background: #fef3c7 !important; }
         .react-calendar__tile.cal-confirmed { background: #fee2e2 !important; }
