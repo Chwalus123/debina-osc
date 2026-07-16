@@ -52,7 +52,7 @@ export async function GET(request: Request) {
     const uid = `block-${b.id}@bazadlaodpoczynku.pl`
     const dtstart = toIcalDate(b.startDate)
     const dtend = toIcalDate(b.endDate)
-    const summary = escapeIcal(b.reason ? `Niedostępne – ${b.reason}` : 'Niedostępne (blokada)')
+    const summary = escapeIcal('Niedostępne (blokada)')
     return [
       'BEGIN:VEVENT',
       `UID:${uid}`,

@@ -50,15 +50,13 @@ export interface WaitlistEntry {
   createdAt: string
 }
 
-/** Blokada terminu założona przez właściciela w panelu admina
- *  (np. pobyt własny / rodziny). Zajmuje termin tak jak rezerwacja,
- *  ale nie pochodzi od gościa. */
+/** Blokada terminu założona przez właściciela w panelu admina.
+ *  Zajmuje termin tak jak rezerwacja, ale nie pochodzi od gościa. */
 export interface Block {
   id: string
   aptId: '1' | '2'
   startDate: string
   endDate: string
-  reason: string
   createdAt: string
 }
 

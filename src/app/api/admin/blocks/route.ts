@@ -3,13 +3,12 @@ export const dynamic = 'force-dynamic'
 
 import { NextResponse } from 'next/server'
 import { isAdminAuthenticated } from '@/lib/admin-auth'
-import { createBlock, getAllBlocks, deleteBlock } from '@/lib/reservations'
+import { createBlock, getAllBlocks, deleteBlock, hasDateConflict } from '@/lib/reservations'
 
 interface CreateBlockPayload {
   aptId: '1' | '2'
   startDate: string
   endDate: string
-  reason?: string
 }
 
 /* Lista blokad (panel admina) */
@@ -28,7 +27,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { aptId, startDate, endDate, reason } = (await request.json()) as CreateBlockPayload
+    const { aptId, startDate, endDate } = (await request.json()) as CreateBlockPayload
 
     if (!aptId || !['1', '2'].includes(aptId)) {
       return NextResponse.json({ error: 'Nieprawidłowy apartament.' }, { status: 400 })
@@ -43,11 +42,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Nieprawidłowy zakres dat.' }, { status: 400 })
     }
 
+    /* Blokada NIE może nadpisać istniejącej rezerwacji ani innej blokady.
+     * Jeśli termin jest już zajęty (strona / Booking.com / inna blokada) — odmawiamy. */
+    const conflict = await hasDateConflict(aptId, start.toISOString(), end.toISOString())
+    if (conflict) {
+      return NextResponse.json(
+        { error: 'Ten termin jest już zajęty (rezerwacja lub inna blokada) — nie można go zablokować.' },
+        { status: 409 },
+      )
+    }
+
     const block = await createBlock({
       aptId,
       startDate: start.toISOString(),
       endDate: end.toISOString(),
-      reason: reason?.trim() ?? '',
     })
 
     return NextResponse.json({ success: true, block })

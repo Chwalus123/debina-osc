@@ -180,8 +180,8 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null)
 
-  const [blockForm, setBlockForm] = useState<{ aptId: '1' | '2' | 'both'; startDate: string; endDate: string; reason: string }>({
-    aptId: '1', startDate: '', endDate: '', reason: '',
+  const [blockForm, setBlockForm] = useState<{ aptId: '1' | '2' | 'both'; startDate: string; endDate: string }>({
+    aptId: '1', startDate: '', endDate: '',
   })
   const [blockSubmitting, setBlockSubmitting] = useState(false)
   const [showArchive, setShowArchive] = useState(false)
@@ -280,7 +280,6 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
               aptId,
               startDate: blockForm.startDate,
               endDate: blockForm.endDate,
-              reason: blockForm.reason,
             }),
           }),
         ),
@@ -291,7 +290,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
         setMessage({ text: d.error ?? 'Nie udało się zablokować terminu.', type: 'error' })
       } else {
         setMessage({ text: 'Termin został zablokowany.', type: 'success' })
-        setBlockForm({ aptId: blockForm.aptId, startDate: '', endDate: '', reason: '' })
+        setBlockForm({ aptId: blockForm.aptId, startDate: '', endDate: '' })
         await loadData()
       }
     } catch {
@@ -410,14 +409,14 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
             <section>
               <h2 className="font-semibold text-base mb-3 flex items-center gap-2" style={{ color: '#0d2f45' }}>
                 <Lock size={16} />
-                Zablokuj termin (pobyt własny / rodzina)
+                Zablokuj termin
               </h2>
               <div className="rounded-2xl p-5 mb-4" style={{ backgroundColor: '#fff', border: '1px solid #e2e8f0' }}>
                 <p className="text-sm mb-4" style={{ color: '#64748b' }}>
                   Zamknij wybrany zakres dat — termin zniknie z możliwości rezerwacji na stronie
                   (będzie oznaczony jako zajęty) i zostanie uwzględniony w synchronizacji z Booking.com.
                 </p>
-                <form onSubmit={handleCreateBlock} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
+                <form onSubmit={handleCreateBlock} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 items-end">
                   <div>
                     <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5" style={{ color: '#64748b' }}>
                       Apartament
@@ -461,19 +460,6 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                       style={{ borderColor: '#e2e8f0', color: '#0d2f45' }}
                     />
                   </div>
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5" style={{ color: '#64748b' }}>
-                      Powód (opcjonalnie)
-                    </label>
-                    <input
-                      type="text"
-                      value={blockForm.reason}
-                      onChange={e => setBlockForm(f => ({ ...f, reason: e.target.value }))}
-                      placeholder="np. pobyt rodziny"
-                      className="w-full px-3 py-2.5 text-sm rounded-xl border outline-none"
-                      style={{ borderColor: '#e2e8f0', color: '#0d2f45' }}
-                    />
-                  </div>
                   <button
                     type="submit"
                     disabled={blockSubmitting}
@@ -490,7 +476,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                   <table className="w-full text-sm" style={{ backgroundColor: '#fff' }}>
                     <thead>
                       <tr style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-                        {['Apartament', 'Termin', 'Powód', 'Dodano', 'Akcje'].map(h => (
+                        {['Apartament', 'Termin', 'Dodano', 'Akcje'].map(h => (
                           <th
                             key={h}
                             className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider"
@@ -512,9 +498,6 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap" style={{ color: '#334155' }}>
                             {formatDate(b.startDate)} – {formatDate(b.endDate)}
-                          </td>
-                          <td className="px-4 py-3" style={{ color: '#334155' }}>
-                            {b.reason || '—'}
                           </td>
                           <td className="px-4 py-3" style={{ color: '#94a3b8' }}>
                             {formatDate(b.createdAt)}
@@ -573,7 +556,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                       <table className="w-full text-sm" style={{ backgroundColor: '#fff' }}>
                         <thead>
                           <tr style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-                            {['Apartament', 'Termin', 'Powód', 'Dodano', 'Akcje'].map(h => (
+                            {['Apartament', 'Termin', 'Dodano', 'Akcje'].map(h => (
                               <th
                                 key={h}
                                 className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider"
@@ -598,9 +581,6 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                               </td>
                               <td className="px-4 py-3 whitespace-nowrap">
                                 {formatDate(b.startDate)} – {formatDate(b.endDate)}
-                              </td>
-                              <td className="px-4 py-3">
-                                {b.reason || '—'}
                               </td>
                               <td className="px-4 py-3">
                                 {formatDate(b.createdAt)}
