@@ -151,7 +151,9 @@ export async function getBlockedSlots(
     getIcalSlots(aptId),
     getAllBlocks().then(all =>
       all
-        .filter(b => b.aptId === aptId)
+        // Pomijamy blokady, których termin już minął — po upływie przestają
+        // wpływać na dostępność (auto-archiwizacja).
+        .filter(b => b.aptId === aptId && new Date(b.endDate).getTime() > Date.now())
         .map(b => ({ start: b.startDate, end: b.endDate, status: 'confirmed' as ReservationStatus })),
     ),
   ])

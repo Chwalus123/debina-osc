@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { LogOut, Loader2, CheckCircle, XCircle, AlertCircle, Clock, Users, Star, MessageSquare, Lock, Plus, Trash2 } from 'lucide-react'
+import { LogOut, Loader2, CheckCircle, XCircle, AlertCircle, Clock, Users, Star, MessageSquare, Lock, Plus, Trash2, ChevronDown, ChevronRight } from 'lucide-react'
 import type { Reservation, WaitlistEntry, Block } from '@/lib/reservations'
 import type { Review } from '@/lib/reviews'
 
@@ -184,6 +184,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
     aptId: '1', startDate: '', endDate: '', reason: '',
   })
   const [blockSubmitting, setBlockSubmitting] = useState(false)
+  const [showArchive, setShowArchive] = useState(false)
 
   const loadData = useCallback(async () => {
     setLoading(true)
@@ -318,6 +319,22 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
     }
   }
 
+  const handleClearArchive = async (ids: string[]) => {
+    if (ids.length === 0) return
+    setActionLoading('clear-archive')
+    try {
+      await Promise.all(
+        ids.map(id => fetch(`/api/admin/blocks?id=${encodeURIComponent(id)}`, { method: 'DELETE' })),
+      )
+      setMessage({ text: 'Archiwum blokad wyczyszczone.', type: 'success' })
+      await loadData()
+    } catch {
+      setMessage({ text: 'Problem z połączeniem.', type: 'error' })
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
   const handleLogout = async () => {
     await fetch('/api/admin/logout', { method: 'POST' })
     onLogout()
@@ -325,6 +342,12 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
 
   const todayStr = new Date().toISOString().slice(0, 10)
   const pending = reservations.filter(r => r.status === 'pending')
+
+  /* Blokady: aktywne (termin jeszcze trwa lub w przyszłości) vs archiwalne
+   * (termin minął) — archiwalne przenosimy do zwijanej sekcji. */
+  const nowTs = Date.now()
+  const activeBlocks = blocks.filter(b => new Date(b.endDate).getTime() > nowTs)
+  const archivedBlocks = blocks.filter(b => new Date(b.endDate).getTime() <= nowTs)
   const others = reservations.filter(r => r.status !== 'pending')
 
   return (
@@ -337,7 +360,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
         <div>
           <h1 className="font-bold text-lg">Panel Admina — Baza dla Odpoczynku</h1>
           <p className="text-xs" style={{ color: '#b3ddf0' }}>
-            {reservations.length} rezerwacji · {blocks.length} zablokowanych terminów · {waitlist.length} na liście oczekujących
+            {reservations.length} rezerwacji · {activeBlocks.length} zablokowanych terminów · {waitlist.length} na liście oczekujących
           </p>
         </div>
         <button
@@ -462,7 +485,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                 </form>
               </div>
 
-              {blocks.length > 0 && (
+              {activeBlocks.length > 0 && (
                 <div className="overflow-x-auto rounded-2xl" style={{ border: '1px solid #e2e8f0' }}>
                   <table className="w-full text-sm" style={{ backgroundColor: '#fff' }}>
                     <thead>
@@ -479,10 +502,10 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                       </tr>
                     </thead>
                     <tbody>
-                      {blocks.map((b, i) => (
+                      {activeBlocks.map((b, i) => (
                         <tr
                           key={b.id}
-                          style={{ borderBottom: i < blocks.length - 1 ? '1px solid #f1f5f9' : 'none' }}
+                          style={{ borderBottom: i < activeBlocks.length - 1 ? '1px solid #f1f5f9' : 'none' }}
                         >
                           <td className="px-4 py-3 font-medium" style={{ color: '#0d2f45' }}>
                             {b.aptId === '1' ? 'Apartament A' : 'Apartament B'}
@@ -514,6 +537,94 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                       ))}
                     </tbody>
                   </table>
+                </div>
+              )}
+
+              {/* Archiwum — blokady, których termin już minął */}
+              {archivedBlocks.length > 0 && (
+                <div className="mt-3">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setShowArchive(v => !v)}
+                      className="flex items-center gap-1.5 text-xs font-semibold transition-opacity hover:opacity-80"
+                      style={{ color: '#64748b' }}
+                    >
+                      {showArchive ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                      Archiwum przeszłych blokad ({archivedBlocks.length})
+                    </button>
+                    {showArchive && (
+                      <button
+                        onClick={() => handleClearArchive(archivedBlocks.map(b => b.id))}
+                        disabled={!!actionLoading}
+                        className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-opacity hover:opacity-80 disabled:opacity-50"
+                        style={{ backgroundColor: '#f1f5f9', color: '#64748b' }}
+                      >
+                        {actionLoading === 'clear-archive' ? (
+                          <Loader2 size={12} className="animate-spin" />
+                        ) : (
+                          <><Trash2 size={12} /> Wyczyść archiwum</>
+                        )}
+                      </button>
+                    )}
+                  </div>
+
+                  {showArchive && (
+                    <div className="mt-2 overflow-x-auto rounded-2xl" style={{ border: '1px solid #e2e8f0' }}>
+                      <table className="w-full text-sm" style={{ backgroundColor: '#fff' }}>
+                        <thead>
+                          <tr style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                            {['Apartament', 'Termin', 'Powód', 'Dodano', 'Akcje'].map(h => (
+                              <th
+                                key={h}
+                                className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider"
+                                style={{ color: '#94a3b8' }}
+                              >
+                                {h}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {archivedBlocks.map((b, i) => (
+                            <tr
+                              key={b.id}
+                              style={{
+                                borderBottom: i < archivedBlocks.length - 1 ? '1px solid #f1f5f9' : 'none',
+                                color: '#94a3b8',
+                              }}
+                            >
+                              <td className="px-4 py-3 font-medium" style={{ color: '#64748b' }}>
+                                {b.aptId === '1' ? 'Apartament A' : 'Apartament B'}
+                              </td>
+                              <td className="px-4 py-3 whitespace-nowrap">
+                                {formatDate(b.startDate)} – {formatDate(b.endDate)}
+                              </td>
+                              <td className="px-4 py-3">
+                                {b.reason || '—'}
+                              </td>
+                              <td className="px-4 py-3">
+                                {formatDate(b.createdAt)}
+                              </td>
+                              <td className="px-4 py-3">
+                                <button
+                                  onClick={() => handleDeleteBlock(b.id)}
+                                  disabled={!!actionLoading}
+                                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-opacity hover:opacity-80 disabled:opacity-50"
+                                  style={{ backgroundColor: '#e5e7eb', color: '#6b7280' }}
+                                >
+                                  {actionLoading === b.id + 'block' ? (
+                                    <Loader2 size={12} className="animate-spin" />
+                                  ) : (
+                                    <><Trash2 size={12} /> Usuń</>
+                                  )}
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
               )}
             </section>
