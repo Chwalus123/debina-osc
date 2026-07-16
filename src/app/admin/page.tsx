@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { LogOut, Loader2, CheckCircle, XCircle, AlertCircle, Clock, Users, Star, MessageSquare } from 'lucide-react'
-import type { Reservation, WaitlistEntry } from '@/lib/reservations'
+import { LogOut, Loader2, CheckCircle, XCircle, AlertCircle, Clock, Users, Star, MessageSquare, Lock, Plus, Trash2 } from 'lucide-react'
+import type { Reservation, WaitlistEntry, Block } from '@/lib/reservations'
 import type { Review } from '@/lib/reviews'
 
 /* ─── Typy ──────────────────────────────────────────────────────────────── */
@@ -175,16 +175,23 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [reservations, setReservations] = useState<Reservation[]>([])
   const [waitlist, setWaitlist] = useState<WaitlistEntry[]>([])
   const [reviews, setReviews] = useState<Review[]>([])
+  const [blocks, setBlocks] = useState<Block[]>([])
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null)
 
+  const [blockForm, setBlockForm] = useState<{ aptId: '1' | '2' | 'both'; startDate: string; endDate: string; reason: string }>({
+    aptId: '1', startDate: '', endDate: '', reason: '',
+  })
+  const [blockSubmitting, setBlockSubmitting] = useState(false)
+
   const loadData = useCallback(async () => {
     setLoading(true)
     try {
-      const [resData, revData] = await Promise.all([
+      const [resData, revData, blkData] = await Promise.all([
         fetch('/api/admin/reservations'),
         fetch('/api/admin/reviews'),
+        fetch('/api/admin/blocks'),
       ])
       if (resData.status === 401) { onLogout(); return }
       const d = await resData.json()
@@ -193,6 +200,10 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
       if (revData.ok) {
         const rd = await revData.json()
         setReviews(rd.reviews ?? [])
+      }
+      if (blkData.ok) {
+        const bd = await blkData.json()
+        setBlocks(bd.blocks ?? [])
       }
     } catch {
       setMessage({ text: 'Błąd ładowania danych.', type: 'error' })
@@ -245,11 +256,74 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
     }
   }
 
+  const handleCreateBlock = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!blockForm.startDate || !blockForm.endDate) {
+      setMessage({ text: 'Podaj datę przyjazdu i wyjazdu.', type: 'error' })
+      return
+    }
+    if (new Date(blockForm.endDate) <= new Date(blockForm.startDate)) {
+      setMessage({ text: 'Data wyjazdu musi być późniejsza niż przyjazdu.', type: 'error' })
+      return
+    }
+
+    setBlockSubmitting(true)
+    try {
+      const apts: ('1' | '2')[] = blockForm.aptId === 'both' ? ['1', '2'] : [blockForm.aptId]
+      const results = await Promise.all(
+        apts.map(aptId =>
+          fetch('/api/admin/blocks', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              aptId,
+              startDate: blockForm.startDate,
+              endDate: blockForm.endDate,
+              reason: blockForm.reason,
+            }),
+          }),
+        ),
+      )
+      const failed = results.find(r => !r.ok)
+      if (failed) {
+        const d = await failed.json().catch(() => ({}))
+        setMessage({ text: d.error ?? 'Nie udało się zablokować terminu.', type: 'error' })
+      } else {
+        setMessage({ text: 'Termin został zablokowany.', type: 'success' })
+        setBlockForm({ aptId: blockForm.aptId, startDate: '', endDate: '', reason: '' })
+        await loadData()
+      }
+    } catch {
+      setMessage({ text: 'Problem z połączeniem.', type: 'error' })
+    } finally {
+      setBlockSubmitting(false)
+    }
+  }
+
+  const handleDeleteBlock = async (id: string) => {
+    setActionLoading(id + 'block')
+    try {
+      const res = await fetch(`/api/admin/blocks?id=${encodeURIComponent(id)}`, { method: 'DELETE' })
+      if (!res.ok) {
+        const d = await res.json().catch(() => ({}))
+        setMessage({ text: d.error ?? 'Nie udało się usunąć blokady.', type: 'error' })
+      } else {
+        setMessage({ text: 'Blokada usunięta.', type: 'success' })
+        await loadData()
+      }
+    } catch {
+      setMessage({ text: 'Problem z połączeniem.', type: 'error' })
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
   const handleLogout = async () => {
     await fetch('/api/admin/logout', { method: 'POST' })
     onLogout()
   }
 
+  const todayStr = new Date().toISOString().slice(0, 10)
   const pending = reservations.filter(r => r.status === 'pending')
   const others = reservations.filter(r => r.status !== 'pending')
 
@@ -263,7 +337,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
         <div>
           <h1 className="font-bold text-lg">Panel Admina — Baza dla Odpoczynku</h1>
           <p className="text-xs" style={{ color: '#b3ddf0' }}>
-            {reservations.length} rezerwacji · {waitlist.length} na liście oczekujących
+            {reservations.length} rezerwacji · {blocks.length} zablokowanych terminów · {waitlist.length} na liście oczekujących
           </p>
         </div>
         <button
@@ -309,6 +383,141 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
           </div>
         ) : (
           <>
+            {/* Blokady terminów (pobyt własny / rodzina) */}
+            <section>
+              <h2 className="font-semibold text-base mb-3 flex items-center gap-2" style={{ color: '#0d2f45' }}>
+                <Lock size={16} />
+                Zablokuj termin (pobyt własny / rodzina)
+              </h2>
+              <div className="rounded-2xl p-5 mb-4" style={{ backgroundColor: '#fff', border: '1px solid #e2e8f0' }}>
+                <p className="text-sm mb-4" style={{ color: '#64748b' }}>
+                  Zamknij wybrany zakres dat — termin zniknie z możliwości rezerwacji na stronie
+                  (będzie oznaczony jako zajęty) i zostanie uwzględniony w synchronizacji z Booking.com.
+                </p>
+                <form onSubmit={handleCreateBlock} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5" style={{ color: '#64748b' }}>
+                      Apartament
+                    </label>
+                    <select
+                      value={blockForm.aptId}
+                      onChange={e => setBlockForm(f => ({ ...f, aptId: e.target.value as '1' | '2' | 'both' }))}
+                      className="w-full px-3 py-2.5 text-sm rounded-xl border outline-none bg-white"
+                      style={{ borderColor: '#e2e8f0', color: '#0d2f45' }}
+                    >
+                      <option value="1">Apartament A</option>
+                      <option value="2">Apartament B</option>
+                      <option value="both">Oba apartamenty</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5" style={{ color: '#64748b' }}>
+                      Przyjazd
+                    </label>
+                    <input
+                      type="date"
+                      value={blockForm.startDate}
+                      min={todayStr}
+                      onChange={e => setBlockForm(f => ({ ...f, startDate: e.target.value }))}
+                      required
+                      className="w-full px-3 py-2.5 text-sm rounded-xl border outline-none"
+                      style={{ borderColor: '#e2e8f0', color: '#0d2f45' }}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5" style={{ color: '#64748b' }}>
+                      Wyjazd
+                    </label>
+                    <input
+                      type="date"
+                      value={blockForm.endDate}
+                      min={blockForm.startDate || todayStr}
+                      onChange={e => setBlockForm(f => ({ ...f, endDate: e.target.value }))}
+                      required
+                      className="w-full px-3 py-2.5 text-sm rounded-xl border outline-none"
+                      style={{ borderColor: '#e2e8f0', color: '#0d2f45' }}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5" style={{ color: '#64748b' }}>
+                      Powód (opcjonalnie)
+                    </label>
+                    <input
+                      type="text"
+                      value={blockForm.reason}
+                      onChange={e => setBlockForm(f => ({ ...f, reason: e.target.value }))}
+                      placeholder="np. pobyt rodziny"
+                      className="w-full px-3 py-2.5 text-sm rounded-xl border outline-none"
+                      style={{ borderColor: '#e2e8f0', color: '#0d2f45' }}
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={blockSubmitting}
+                    className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-60"
+                    style={{ backgroundColor: '#0d2f45', color: '#fff' }}
+                  >
+                    {blockSubmitting ? <Loader2 size={15} className="animate-spin" /> : <><Plus size={15} /> Zablokuj</>}
+                  </button>
+                </form>
+              </div>
+
+              {blocks.length > 0 && (
+                <div className="overflow-x-auto rounded-2xl" style={{ border: '1px solid #e2e8f0' }}>
+                  <table className="w-full text-sm" style={{ backgroundColor: '#fff' }}>
+                    <thead>
+                      <tr style={{ backgroundColor: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                        {['Apartament', 'Termin', 'Powód', 'Dodano', 'Akcje'].map(h => (
+                          <th
+                            key={h}
+                            className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider"
+                            style={{ color: '#64748b' }}
+                          >
+                            {h}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {blocks.map((b, i) => (
+                        <tr
+                          key={b.id}
+                          style={{ borderBottom: i < blocks.length - 1 ? '1px solid #f1f5f9' : 'none' }}
+                        >
+                          <td className="px-4 py-3 font-medium" style={{ color: '#0d2f45' }}>
+                            {b.aptId === '1' ? 'Apartament A' : 'Apartament B'}
+                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap" style={{ color: '#334155' }}>
+                            {formatDate(b.startDate)} – {formatDate(b.endDate)}
+                          </td>
+                          <td className="px-4 py-3" style={{ color: '#334155' }}>
+                            {b.reason || '—'}
+                          </td>
+                          <td className="px-4 py-3" style={{ color: '#94a3b8' }}>
+                            {formatDate(b.createdAt)}
+                          </td>
+                          <td className="px-4 py-3">
+                            <button
+                              onClick={() => handleDeleteBlock(b.id)}
+                              disabled={!!actionLoading}
+                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-opacity hover:opacity-80 disabled:opacity-50"
+                              style={{ backgroundColor: '#dc2626', color: '#fff' }}
+                            >
+                              {actionLoading === b.id + 'block' ? (
+                                <Loader2 size={12} className="animate-spin" />
+                              ) : (
+                                <><Trash2 size={12} /> Usuń</>
+                              )}
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </section>
+
             {/* Oczekujące */}
             {pending.length > 0 && (
               <section>

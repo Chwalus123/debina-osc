@@ -50,6 +50,18 @@ export interface WaitlistEntry {
   createdAt: string
 }
 
+/** Blokada terminu założona przez właściciela w panelu admina
+ *  (np. pobyt własny / rodziny). Zajmuje termin tak jak rezerwacja,
+ *  ale nie pochodzi od gościa. */
+export interface Block {
+  id: string
+  aptId: '1' | '2'
+  startDate: string
+  endDate: string
+  reason: string
+  createdAt: string
+}
+
 /* ─── CRUD: Reservations ────────────────────────────────────────────────── */
 
 export async function createReservation(
@@ -130,15 +142,20 @@ async function getIcalSlots(
 export async function getBlockedSlots(
   aptId: '1' | '2',
 ): Promise<Array<{ start: string; end: string; status: ReservationStatus }>> {
-  const [local, ical] = await Promise.all([
+  const [local, ical, blocks] = await Promise.all([
     getAllReservations().then(all =>
       all
         .filter(r => r.aptId === aptId && (r.status === 'pending' || r.status === 'confirmed'))
         .map(r => ({ start: r.startDate, end: r.endDate, status: r.status })),
     ),
     getIcalSlots(aptId),
+    getAllBlocks().then(all =>
+      all
+        .filter(b => b.aptId === aptId)
+        .map(b => ({ start: b.startDate, end: b.endDate, status: 'confirmed' as ReservationStatus })),
+    ),
   ])
-  return [...local, ...ical]
+  return [...local, ...ical, ...blocks]
 }
 
 /* ─── Konflikt dat ──────────────────────────────────────────────────────── */
@@ -211,4 +228,43 @@ export async function removeFromWaitlist(id: string): Promise<void> {
   await kv.del(`wait:${id}`)
   const list: string[] = (await kv.get<string[]>('wait:list')) ?? []
   await kv.set('wait:list', list.filter(i => i !== id))
+}
+
+/* ─── CRUD: Blokady terminów (właściciel) ───────────────────────────────── */
+
+export async function createBlock(
+  data: Omit<Block, 'id' | 'createdAt'>,
+): Promise<Block> {
+  const { nanoid } = await import('nanoid')
+  const block: Block = {
+    ...data,
+    id: nanoid(),
+    createdAt: new Date().toISOString(),
+  }
+
+  await kv.set(`block:${block.id}`, JSON.stringify(block))
+
+  const list: string[] = (await kv.get<string[]>('block:list')) ?? []
+  list.unshift(block.id)
+  await kv.set('block:list', list)
+
+  return block
+}
+
+export async function getAllBlocks(): Promise<Block[]> {
+  const list: string[] = (await kv.get<string[]>('block:list')) ?? []
+  const blocks = await Promise.all(
+    list.map(async id => {
+      const raw = await kv.get<string>(`block:${id}`)
+      if (!raw) return null
+      return (typeof raw === 'string' ? JSON.parse(raw) : raw) as Block
+    }),
+  )
+  return blocks.filter((b): b is Block => b !== null)
+}
+
+export async function deleteBlock(id: string): Promise<void> {
+  await kv.del(`block:${id}`)
+  const list: string[] = (await kv.get<string[]>('block:list')) ?? []
+  await kv.set('block:list', list.filter(i => i !== id))
 }

@@ -2,7 +2,7 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 import { NextResponse } from 'next/server'
-import { getAllReservations } from '@/lib/reservations'
+import { getAllReservations, getAllBlocks } from '@/lib/reservations'
 
 function toIcalDate(iso: string): string {
   // Format: YYYYMMDD (all-day, no time component — Booking.com prefers this)
@@ -21,10 +21,11 @@ export async function GET(request: Request) {
     return new NextResponse('Nieprawidłowy apartament', { status: 400 })
   }
 
-  const all = await getAllReservations()
+  const [all, allBlocks] = await Promise.all([getAllReservations(), getAllBlocks()])
   const reservations = all.filter(
     r => r.aptId === apt && (r.status === 'confirmed' || r.status === 'pending'),
   )
+  const blocks = allBlocks.filter(b => b.aptId === apt)
 
   const aptName = apt === '1' ? 'Apartament A – Baza dla Odpoczynku' : 'Apartament B – Baza dla Odpoczynku'
   const now = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'
@@ -47,6 +48,24 @@ export async function GET(request: Request) {
     ].join('\r\n')
   })
 
+  const blockEvents = blocks.map(b => {
+    const uid = `block-${b.id}@bazadlaodpoczynku.pl`
+    const dtstart = toIcalDate(b.startDate)
+    const dtend = toIcalDate(b.endDate)
+    const summary = escapeIcal(b.reason ? `Niedostępne – ${b.reason}` : 'Niedostępne (blokada)')
+    return [
+      'BEGIN:VEVENT',
+      `UID:${uid}`,
+      `DTSTAMP:${now}`,
+      `DTSTART;VALUE=DATE:${dtstart}`,
+      `DTEND;VALUE=DATE:${dtend}`,
+      `SUMMARY:${summary}`,
+      'STATUS:CONFIRMED',
+      'TRANSP:OPAQUE',
+      'END:VEVENT',
+    ].join('\r\n')
+  })
+
   const ical = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
@@ -56,6 +75,7 @@ export async function GET(request: Request) {
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
     ...events,
+    ...blockEvents,
     'END:VCALENDAR',
   ].join('\r\n')
 
