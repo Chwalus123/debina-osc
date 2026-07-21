@@ -11,10 +11,12 @@ export function calculateTotalPrice(aptId: '1' | '2', startDate: string, endDate
   const end = new Date(endDate)
   let total = 0
   const current = new Date(start)
+  // Iterujemy po dobach w UTC — daty są zapisywane jako północ UTC,
+  // więc liczenie jest niezależne od strefy czasowej serwera.
   while (current < end) {
-    const month = current.getMonth() // 0-indexed
+    const month = current.getUTCMonth() // 0-indexed
     total += prices[month]
-    current.setDate(current.getDate() + 1)
+    current.setUTCDate(current.getUTCDate() + 1)
   }
   return total
 }

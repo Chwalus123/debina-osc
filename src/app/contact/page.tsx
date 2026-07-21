@@ -317,8 +317,15 @@ export default function ContactPage() {
   const formatDate = (d: Date) =>
     d.toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' })
 
+  /* react-calendar zwraca koniec zakresu jako ostatnią milisekundę dnia,
+   * a lokalna północ po .toISOString() przesuwa się o strefę (Polska UTC+1/+2),
+   * przez co dzień „ucieka" na wcześniejszy. Dlatego liczymy WYŁĄCZNIE po dacie
+   * kalendarzowej (rok/miesiąc/dzień) mapowanej na północ UTC — bez godziny. */
+  const dayUTC = (d: Date) => Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())
+  const toDateOnlyISO = (d: Date) => new Date(dayUTC(d)).toISOString()
+
   const nightsCount = dateRange
-    ? Math.round((dateRange[1].getTime() - dateRange[0].getTime()) / 86_400_000)
+    ? Math.round((dayUTC(dateRange[1]) - dayUTC(dateRange[0])) / 86_400_000)
     : 0
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
@@ -359,8 +366,8 @@ export default function ContactPage() {
         guestPhone: formData.phone,
         guests: formData.guests,
         message: formData.message,
-        startDate: dateRange[0].toISOString(),
-        endDate: dateRange[1].toISOString(),
+        startDate: toDateOnlyISO(dateRange[0]),
+        endDate: toDateOnlyISO(dateRange[1]),
       }
 
       const res = await fetch('/api/booking/reserve', {
@@ -683,8 +690,8 @@ export default function ContactPage() {
                             >
                               <WaitlistForm
                                 aptId={apartment}
-                                startDate={dateRange[0].toISOString()}
-                                endDate={dateRange[1].toISOString()}
+                                startDate={toDateOnlyISO(dateRange[0])}
+                                endDate={toDateOnlyISO(dateRange[1])}
                                 onClose={() => { setShowWaitlist(false); setStatus('idle') }}
                               />
                             </motion.div>
