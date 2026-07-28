@@ -10,7 +10,7 @@ const navLinks = [
   { href: '/',            label: 'O nas'           },
   { href: '/apartments',  label: 'Apartamenty'     },
   { href: '/price-list',  label: 'Cennik'          },
-  { href: '/gift-cards',  label: 'Bon podarunkowy' },
+  { href: '/gift-cards',  label: 'Bony'            },
   { href: '/terms',       label: 'Regulamin'       },
   { href: '/RODO',        label: 'RODO'            },
   { href: '/contact',     label: 'Kontakt'         },

@@ -8,7 +8,6 @@ import {
   Utensils,
   Bath,
   Wifi,
-  Car,
   Users,
   BedDouble,
   CheckCircle2,
@@ -513,21 +512,42 @@ function ApartmentCard({
 export default function ApartmentsPage() {
   return (
     <>
-      <section
-        className="relative py-40 px-4 text-white"
-        style={{
-          backgroundImage: "linear-gradient(to bottom, rgba(10,31,46,0.6) 0%, rgba(10,31,46,0.45) 60%, rgba(10,31,46,0.75) 100%), url('/img/11.G.taras.jpg')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      >
-        <div className="container mx-auto max-w-4xl text-center">
+      <section className="relative py-40 px-4 text-white overflow-hidden">
+        {/* Zdjęcie tła — rozjaśnione i ocieplone (zachód słońca nad Dębiną) */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: "url('/img/11.G.taras.jpg')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            filter: 'brightness(1.18) saturate(1.3) contrast(0.97)',
+          }}
+        />
+        {/* Ciepła poświata zachodzącego słońca */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              'radial-gradient(120% 95% at 78% 34%, rgba(255,186,102,0.55) 0%, rgba(255,150,80,0.28) 36%, rgba(255,124,64,0.10) 60%, transparent 78%)',
+            mixBlendMode: 'soft-light',
+          }}
+        />
+        {/* Minimalna warstwa wyłącznie dla czytelności tekstu */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              'linear-gradient(to bottom, rgba(10,31,46,0.24) 0%, rgba(10,31,46,0.10) 45%, rgba(10,31,46,0.34) 100%)',
+          }}
+        />
+
+        <div className="relative z-10 container mx-auto max-w-4xl text-center">
           <motion.span
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: 'easeOut' as const }}
             className="inline-block mb-3 text-xs font-semibold uppercase tracking-widest"
-            style={{ color: '#7cc2e4' }}
+            style={{ color: '#ffdca8', textShadow: '0 1px 8px rgba(10,31,46,0.55)' }}
           >
             Apartamenty na wynajem
           </motion.span>
@@ -540,6 +560,7 @@ export default function ApartmentsPage() {
               fontSize: 'clamp(2rem, 5vw, 3.75rem)',
               fontWeight: 700,
               lineHeight: 1.15,
+              textShadow: '0 2px 18px rgba(10,31,46,0.6)',
             }}
           >
             Nasze Apartamenty
@@ -549,7 +570,7 @@ export default function ApartmentsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.22, ease: 'easeOut' as const }}
             className="mt-4 max-w-xl mx-auto text-base md:text-lg leading-relaxed"
-            style={{ color: 'rgba(255,255,255,0.8)' }}
+            style={{ color: 'rgba(255,255,255,0.94)', textShadow: '0 2px 12px rgba(10,31,46,0.6)' }}
           >
             Dwa nowoczesne apartamenty loft w pierwszej linii brzegowej Dębiny —
             każdy z własną kuchnią, łazienką, balkonem i klimatyzacją.
