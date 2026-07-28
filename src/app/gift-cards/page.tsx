@@ -1,38 +1,46 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Gift, Percent, CheckCircle, Mail, Phone, ArrowRight, Info } from 'lucide-react'
 
 /* ─── Dane bonów ─────────────────────────────────────────────── */
 
-const bonPodarunkowy = {
-  icon: Gift,
-  badge: 'Bon Podarunkowy',
-  title: 'Podaruj wypoczynek',
-  desc: 'Idealny prezent dla bliskich — na pobyt w apartamencie w Dębinie, w otoczeniu lasu, klifu i morza.',
-  gradient: 'linear-gradient(135deg, #0a1f2e 0%, #124f74 60%, #2280b8 100%)',
-  accent: '#7cc2e4',
-  points: [
-    'Bon na pobyt w wybranym apartamencie',
-    'Elegancka forma — gotowy do wręczenia',
-    'Dedykowane życzenia dla obdarowanego',
-  ],
-}
-
-const bonRabatowy = {
-  icon: Percent,
-  badge: 'Bon Rabatowy',
-  title: 'Zniżka na pobyt',
-  desc: 'Uprawnia posiadacza do zniżki w wysokości zapisanej na bonie — na dłuższy, spokojny wypoczynek poza sezonem.',
-  gradient: 'linear-gradient(135deg, #1a3028 0%, #2d6651 60%, #3a8067 100%)',
-  accent: '#9fd6c2',
-  points: [
-    'Zniżka w wysokości zapisanej na bonie',
-    'Minimum 5 dób noclegowych',
-    'Ważny rok od daty wydania',
-  ],
-}
+const bony = [
+  {
+    key: 'podarunkowy',
+    icon: Gift,
+    badge: 'Bon Podarunkowy',
+    tagline: 'Ciesz się wypoczynkiem!',
+    desc: 'Idealny prezent dla bliskich — na pobyt w wybranym apartamencie w Dębinie, przy ul. Modrzewiowej 29, w otoczeniu lasu, klifu i morza.',
+    img: '/img/bon-podarunkowy.png',
+    width: 745,
+    height: 351,
+    accent: '#2d6651',
+    points: [
+      'Na pobyt w wybranym apartamencie',
+      'Elegancka forma — gotowy do wręczenia',
+      'Dedykowane życzenia dla obdarowanego',
+    ],
+  },
+  {
+    key: 'rabatowy',
+    icon: Percent,
+    badge: 'Bon Rabatowy',
+    tagline: 'Ciesz się tańszym wypoczynkiem!',
+    desc: 'Zniżka na cały pobyt — w wysokości zapisanej na bonie. Idealny na dłuższy, spokojny wypoczynek poza szczytem sezonu.',
+    img: '/img/bon-rabatowy.png',
+    width: 768,
+    height: 406,
+    accent: '#2d6651',
+    points: [
+      'Zniżka na cały pobyt, w wysokości zapisanej na bonie',
+      'Rezerwacja na minimum 5 dób noclegowych',
+      'Ważny rok od daty wydania',
+    ],
+  },
+]
 
 /* Reguły z rewersu bonu rabatowego */
 const reguly = [
@@ -47,7 +55,7 @@ const reguly = [
 
 /* ─── Karta bonu ─────────────────────────────────────────────── */
 
-function BonCard({ bon, delay }: { bon: typeof bonPodarunkowy; delay: number }) {
+function BonCard({ bon, delay }: { bon: (typeof bony)[number]; delay: number }) {
   const Icon = bon.icon
   return (
     <motion.div
@@ -55,64 +63,51 @@ function BonCard({ bon, delay }: { bon: typeof bonPodarunkowy; delay: number }) 
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6, delay, ease: 'easeOut' as const }}
-      className="flex flex-col"
+      className="flex flex-col rounded-3xl overflow-hidden"
+      style={{ backgroundColor: '#ffffff', border: '1px solid #e2e8f0', boxShadow: '0 4px 24px rgba(10,31,46,0.07)' }}
     >
-      {/* Wizualizacja bonu */}
-      <div
-        className="relative overflow-hidden rounded-3xl p-7 text-white"
-        style={{ background: bon.gradient, minHeight: '230px' }}
-      >
-        <div
-          className="absolute top-0 right-0 w-48 h-48 rounded-full opacity-10"
-          style={{ background: `radial-gradient(circle, ${bon.accent}, transparent)`, transform: 'translate(30%, -30%)' }}
+      {/* Zdjęcie bonu */}
+      <div className="p-4" style={{ backgroundColor: '#f7fbf9' }}>
+        <Image
+          src={bon.img}
+          alt={`${bon.badge} — Baza dla Odpoczynku, Dębina`}
+          width={bon.width}
+          height={bon.height}
+          className="w-full h-auto rounded-xl"
+          style={{ boxShadow: '0 2px 12px rgba(10,31,46,0.10)' }}
+          sizes="(max-width: 768px) 100vw, 50vw"
         />
-        <div
-          className="absolute bottom-0 left-0 w-36 h-36 rounded-full opacity-10"
-          style={{ background: 'radial-gradient(circle, #ffffff, transparent)', transform: 'translate(-30%, 30%)' }}
-        />
-
-        <div className="relative z-10 flex flex-col h-full gap-3">
-          <div className="flex items-center gap-2">
-            <Icon size={20} style={{ color: bon.accent }} />
-            <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: bon.accent }}>
-              {bon.badge}
-            </span>
-          </div>
-
-          <h3
-            className="text-2xl md:text-3xl"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700 }}
-          >
-            {bon.title}
-          </h3>
-
-          <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.78)' }}>
-            {bon.desc}
-          </p>
-
-          <div className="mt-auto pt-4 border-t" style={{ borderColor: 'rgba(255,255,255,0.15)' }}>
-            <p
-              className="text-base"
-              style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic', color: 'rgba(255,255,255,0.9)' }}
-            >
-              Ciesz się wypoczynkiem!
-            </p>
-            <p className="mt-1 text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>
-              Dębina, ul. Modrzewiowa 29 · Wybrzeże Słowińskie
-            </p>
-          </div>
-        </div>
       </div>
 
-      {/* Punkty */}
-      <ul className="mt-4 space-y-2 px-1">
-        {bon.points.map(p => (
-          <li key={p} className="flex items-start gap-2.5 text-sm" style={{ color: '#4a5568' }}>
-            <CheckCircle size={15} style={{ color: '#3a8067', flexShrink: 0, marginTop: '2px' }} />
-            {p}
-          </li>
-        ))}
-      </ul>
+      {/* Opis */}
+      <div className="flex flex-col flex-1 p-6">
+        <div className="flex items-center gap-2 mb-2">
+          <Icon size={18} style={{ color: bon.accent }} />
+          <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: bon.accent }}>
+            {bon.badge}
+          </span>
+        </div>
+
+        <p
+          className="text-lg mb-3"
+          style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic', color: '#0d2f45' }}
+        >
+          {bon.tagline}
+        </p>
+
+        <p className="text-sm leading-relaxed mb-4" style={{ color: '#4a5568' }}>
+          {bon.desc}
+        </p>
+
+        <ul className="mt-auto space-y-2">
+          {bon.points.map(p => (
+            <li key={p} className="flex items-start gap-2.5 text-sm" style={{ color: '#4a5568' }}>
+              <CheckCircle size={15} style={{ color: '#3a8067', flexShrink: 0, marginTop: '2px' }} />
+              {p}
+            </li>
+          ))}
+        </ul>
+      </div>
     </motion.div>
   )
 }
@@ -164,9 +159,10 @@ export default function GiftCardPage() {
       {/* Dwa rodzaje bonów */}
       <section className="py-16 px-4">
         <div className="container mx-auto max-w-5xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-            <BonCard bon={bonPodarunkowy} delay={0} />
-            <BonCard bon={bonRabatowy} delay={0.1} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+            {bony.map((bon, i) => (
+              <BonCard key={bon.key} bon={bon} delay={i * 0.1} />
+            ))}
           </div>
         </div>
       </section>
