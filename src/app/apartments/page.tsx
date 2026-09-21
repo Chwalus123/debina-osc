@@ -15,6 +15,7 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  Car,
 } from 'lucide-react'
 
 /* ─── Typy ───────────────────────────────────────────────────── */
@@ -42,7 +43,7 @@ const apt1 = {
     'Bezpłatne Wi-Fi',
     '2 telewizory',
     'Leżaki, parawan, deska do prasowania, żelazko, suszarka do włosów, pościel',
-    'Bezpłatne niemonitorowane miejsce parkingowe poza obiektem',
+    'Bezpłatne miejsce parkingowe na terenie obiektu - w hali garażowej',
     'Miejsce do pozostawienia rowerów',
     'Plac zabaw dla najmłodszych',
     'Bezpośrednie wyjście na ścieżkę prowadzącą na Klif i zejście na plażę',
@@ -55,6 +56,7 @@ const apt1 = {
     { icon: Utensils,  label: 'Kuchnia'     },
     { icon: Bath,      label: 'Prysznic'    },
     { icon: Wifi,      label: 'Wi-Fi'       },
+    { icon: Car,       label: 'Parking'     },
   ],
   gallery: [
     { src: '/img/15.D.salonzaneksem.jpg',                alt: 'Salon z aneksem kuchennym'        },
@@ -86,7 +88,7 @@ const apt2 = {
     'Bezpłatne Wi-Fi',
     '2 telewizory',
     'Leżaki, parawan, deska do prasowania, żelazko, suszarka do włosów, pościel',
-    'Bezpłatne miejsce parkingowe poza obiektem',
+    'Bezpłatne miejsce parkingowe na terenie obiektu - w hali garażowej',
     'Miejsce do pozostawienia rowerów',
     'Plac zabaw dla najmłodszych',
     'Bezpośrednie wyjście na ścieżkę prowadzącą na Klif i zejście na plażę',
@@ -99,6 +101,7 @@ const apt2 = {
     { icon: Utensils,  label: 'Kuchnia'     },
     { icon: Bath,      label: 'Prysznic'    },
     { icon: Wifi,      label: 'Wi-Fi'       },
+    { icon: Car,       label: 'Parking'     },
   ],
   gallery: [
     { src: '/img/1.G.wej%C5%9Bcie.JPG',         alt: 'Wejście do apartamentu'     },

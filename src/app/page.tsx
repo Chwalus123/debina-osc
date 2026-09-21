@@ -5,250 +5,277 @@ import Link from 'next/link'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import { useRef, useState, useEffect } from 'react'
 import {
-  Waves,
-  TreePine,
-  Star,
-  Wind,
-  MapPin,
-  ArrowRight,
-  Quote,
-  Sun,
-  Shell,
-  Bike,
-  PenLine,
-  CheckCircle,
-  Loader2,
-  X,
+	Waves,
+	TreePine,
+	Star,
+	Wind,
+	MapPin,
+	ArrowRight,
+	Quote,
+	Sun,
+	Shell,
+	Bike,
+	PenLine,
+	CheckCircle,
+	Loader2,
+	X,
+	ExternalLink,
 } from 'lucide-react'
 
 /* ─── Dane statyczne ─────────────────────────────────────────── */
 
 const features = [
-  {
-    icon: Waves,
-    title: 'Morze o krok',
-    desc: 'Plaża dostępna ścieżką przez las dębowo-grabowy Natura 2000 — ok. 400 m od apartamentów.',
-  },
-  {
-    icon: TreePine,
-    title: 'Las Natura 2000',
-    desc: 'Bezpośrednie sąsiedztwo chronionych lasów dębowo-grabowych i sosnowych Pobrzeża Słowińskiego.',
-  },
-  {
-    icon: Wind,
-    title: 'Klif i panorama',
-    desc: 'Malowniczy klif do 30 m n.p.m. — jedno z piękniejszych miejsc polskiego wybrzeża.',
-  },
-  {
-    icon: Sun,
-    title: 'Styl i komfort',
-    desc: 'Nowoczesne apartamenty w stylu loft, wyposażone w wysokim standardzie z klimatem nadmorskim.',
-  },
+	{
+		icon: Waves,
+		title: 'Morze o krok',
+		desc: 'Plaża dostępna ścieżką przez las dębowo-grabowy Natura 2000 — ok. 400 m od apartamentów.',
+	},
+	{
+		icon: TreePine,
+		title: 'Las Natura 2000',
+		desc: 'Bezpośrednie sąsiedztwo chronionych lasów dębowo-grabowych i sosnowych Pobrzeża Słowińskiego.',
+	},
+	{
+		icon: Wind,
+		title: 'Klif i panorama',
+		desc: 'Malowniczy klif do 30 m n.p.m. — jedno z piękniejszych miejsc polskiego wybrzeża.',
+	},
+	{
+		icon: Sun,
+		title: 'Styl i komfort',
+		desc: 'Nowoczesne apartamenty w stylu loft, wyposażone w wysokim standardzie z klimatem nadmorskim.',
+	},
 ]
 
 const attractions = [
-  {
-    icon: Shell,
-    title: 'Plaża w Dębinie',
-    desc: 'Piaszczysta, szeroka plaża ok. 400 m od apartamentów — ścieżkami przez las dębowo-grabowy Natura 2000. Spokój i dzikość z dala od tłumów.',
-    img: '/img/DSC02495.JPG',
-  },
-  {
-    icon: Waves,
-    title: 'Klif w Dębinie',
-    desc: 'Malowniczy klif do 30 m n.p.m., część pasma łączącego Dębinę z Poddąbiem i Rowami. Z jego szczytu widać podwodne głazy zwane Kamieniskim.',
-    img: '/img/DSC02480.JPG',
-  },
-  {
-    icon: Bike,
-    title: 'Szlaki i atrakcje',
-    desc: 'Trasy piesze i rowerowe przez Słowiński Park Narodowy, zatopiony las koło Czołpina, wrak torpedowca w Poddąbiu oraz szlak „Zwiniętych Torów" z Ustki do Rowów.',
-    img: '/img/1000002723.png',
-  },
+	{
+		icon: Shell,
+		title: 'Plaża w Dębinie',
+		desc: 'Piaszczysta, szeroka plaża ok. 400 m od apartamentów — ścieżkami przez las dębowo-grabowy Natura 2000. Spokój i dzikość z dala od tłumów.',
+		img: '/img/DSC02495.JPG',
+	},
+	{
+		icon: Waves,
+		title: 'Klif w Dębinie',
+		desc: 'Malowniczy klif do 30 m n.p.m., część pasma łączącego Dębinę z Poddąbiem i Rowami. Z jego szczytu widać podwodne głazy zwane Kamieniskim.',
+		img: '/img/DSC02480.JPG',
+	},
+	{
+		icon: Bike,
+		title: 'Szlaki i atrakcje',
+		desc: 'Trasy piesze i rowerowe przez Słowiński Park Narodowy, zatopiony las koło Czołpina, wrak torpedowca w Poddąbiu oraz szlak „Zwiniętych Torów" z Ustki do Rowów.',
+		img: '/img/1000002723.png',
+	},
+]
+
+const guestNotes = [
+	{ src: '/img/opinia1.jpg', alt: 'Marzena, Piotr i Tosia' },
+	{ src: '/img/opinia2.jpg', alt: 'Magda' },
+	{ src: '/img/opinia3.jpg', alt: 'Państwo M.P. i Kamil' },
 ]
 
 /* ─── Typy opinii ────────────────────────────────────────────── */
 
 interface ReviewItem {
-  id: string
-  name: string
-  location: string
-  rating: number
-  text: string
+	id: string
+	name: string
+	location: string
+	rating: number
+	text: string
 }
 
 /* ─── Subkomponenty ──────────────────────────────────────────── */
 
 function StarRating({ count }: { count: number }) {
-  return (
-    <div className="flex gap-0.5">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <Star key={i} size={14} fill={i < count ? '#f59e0b' : 'none'} stroke={i < count ? 'none' : '#d1d5db'} />
-      ))}
-    </div>
-  )
+	return (
+		<div className='flex gap-0.5'>
+			{Array.from({ length: 5 }).map((_, i) => (
+				<Star key={i} size={14} fill={i < count ? '#f59e0b' : 'none'} stroke={i < count ? 'none' : '#d1d5db'} />
+			))}
+		</div>
+	)
 }
 
 function StarPicker({ value, onChange }: { value: number; onChange: (v: number) => void }) {
-  const [hovered, setHovered] = useState(0)
-  return (
-    <div className="flex gap-1">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <button
-          key={i}
-          type="button"
-          onMouseEnter={() => setHovered(i + 1)}
-          onMouseLeave={() => setHovered(0)}
-          onClick={() => onChange(i + 1)}
-        >
-          <Star
-            size={28}
-            fill={(hovered || value) > i ? '#f59e0b' : 'none'}
-            stroke={(hovered || value) > i ? '#f59e0b' : '#d1d5db'}
-          />
-        </button>
-      ))}
-    </div>
-  )
+	const [hovered, setHovered] = useState(0)
+	return (
+		<div className='flex gap-1'>
+			{Array.from({ length: 5 }).map((_, i) => (
+				<button
+					key={i}
+					type='button'
+					onMouseEnter={() => setHovered(i + 1)}
+					onMouseLeave={() => setHovered(0)}
+					onClick={() => onChange(i + 1)}>
+					<Star
+						size={28}
+						fill={(hovered || value) > i ? '#f59e0b' : 'none'}
+						stroke={(hovered || value) > i ? '#f59e0b' : '#d1d5db'}
+					/>
+				</button>
+			))}
+		</div>
+	)
 }
 
 function ReviewForm({ onClose, onSubmitted }: { onClose: () => void; onSubmitted: () => void }) {
-  const [name, setName] = useState('')
-  const [location, setLocation] = useState('')
-  const [rating, setRating] = useState(0)
-  const [text, setText] = useState('')
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
-  const [error, setError] = useState('')
+	const [name, setName] = useState('')
+	const [location, setLocation] = useState('')
+	const [rating, setRating] = useState(0)
+	const [text, setText] = useState('')
+	const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+	const [error, setError] = useState('')
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (rating === 0) { setError('Wybierz ocenę.'); return }
-    setStatus('loading')
-    setError('')
-    try {
-      const res = await fetch('/api/reviews/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, location, rating, text }),
-      })
-      const data = await res.json()
-      if (!res.ok) { setError(data.error ?? 'Błąd.'); setStatus('error'); return }
-      setStatus('success')
-      setTimeout(onSubmitted, 2000)
-    } catch {
-      setError('Problem z połączeniem.')
-      setStatus('error')
-    }
-  }
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault()
+		if (rating === 0) {
+			setError('Wybierz ocenę.')
+			return
+		}
+		setStatus('loading')
+		setError('')
+		try {
+			const res = await fetch('/api/reviews/submit', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ name, location, rating, text }),
+			})
+			const data = await res.json()
+			if (!res.ok) {
+				setError(data.error ?? 'Błąd.')
+				setStatus('error')
+				return
+			}
+			setStatus('success')
+			setTimeout(onSubmitted, 2000)
+		} catch {
+			setError('Problem z połączeniem.')
+			setStatus('error')
+		}
+	}
 
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ backgroundColor: 'rgba(10,31,46,0.6)' }}
-      onClick={e => { if (e.target === e.currentTarget) onClose() }}
-    >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 16 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 16 }}
-        transition={{ duration: 0.25, ease: 'easeOut' as const }}
-        className="w-full max-w-lg rounded-3xl p-8 relative"
-        style={{ backgroundColor: '#fff', boxShadow: '0 24px 64px rgba(10,31,46,0.18)' }}
-      >
-        <button
-          onClick={onClose}
-          className="absolute top-5 right-5 p-1.5 rounded-full hover:bg-gray-100 transition-colors"
-        >
-          <X size={18} style={{ color: '#94a3b8' }} />
-        </button>
+	return (
+		<div
+			className='fixed inset-0 z-50 flex items-center justify-center p-4'
+			style={{ backgroundColor: 'rgba(10,31,46,0.6)' }}
+			onClick={e => {
+				if (e.target === e.currentTarget) onClose()
+			}}>
+			<motion.div
+				initial={{ opacity: 0, scale: 0.95, y: 16 }}
+				animate={{ opacity: 1, scale: 1, y: 0 }}
+				exit={{ opacity: 0, scale: 0.95, y: 16 }}
+				transition={{ duration: 0.25, ease: 'easeOut' as const }}
+				className='w-full max-w-lg rounded-3xl p-8 relative'
+				style={{ backgroundColor: '#fff', boxShadow: '0 24px 64px rgba(10,31,46,0.18)' }}>
+				<button
+					onClick={onClose}
+					className='absolute top-5 right-5 p-1.5 rounded-full hover:bg-gray-100 transition-colors'>
+					<X size={18} style={{ color: '#94a3b8' }} />
+				</button>
 
-        {status === 'success' ? (
-          <div className="flex flex-col items-center gap-4 py-8 text-center">
-            <CheckCircle size={48} style={{ color: '#3a8067' }} />
-            <h3 className="text-xl font-bold" style={{ color: '#0d2f45' }}>Dziękujemy!</h3>
-            <p className="text-sm" style={{ color: '#64748b' }}>
-              Twoja opinia zostanie opublikowana po weryfikacji.
-            </p>
-          </div>
-        ) : (
-          <>
-            <h3
-              className="text-xl font-bold mb-1"
-              style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#0d2f45' }}
-            >
-              Napisz opinię
-            </h3>
-            <p className="text-sm mb-6" style={{ color: '#64748b' }}>
-              Podziel się wrażeniami z pobytu. Opinia pojawi się natychmiast.
-            </p>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold mb-1" style={{ color: '#64748b' }}>Imię *</label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                    required
-                    placeholder="Jan K."
-                    className="w-full px-3 py-2.5 text-sm rounded-xl border outline-none"
-                    style={{ borderColor: '#e2e8f0', color: '#0d2f45' }}
-                    onFocus={e => (e.currentTarget.style.borderColor = '#124f74')}
-                    onBlur={e => (e.currentTarget.style.borderColor = '#e2e8f0')}
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold mb-1" style={{ color: '#64748b' }}>Miasto</label>
-                  <input
-                    type="text"
-                    value={location}
-                    onChange={e => setLocation(e.target.value)}
-                    placeholder="Warszawa"
-                    className="w-full px-3 py-2.5 text-sm rounded-xl border outline-none"
-                    style={{ borderColor: '#e2e8f0', color: '#0d2f45' }}
-                    onFocus={e => (e.currentTarget.style.borderColor = '#124f74')}
-                    onBlur={e => (e.currentTarget.style.borderColor = '#e2e8f0')}
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs font-semibold mb-2" style={{ color: '#64748b' }}>Ocena *</label>
-                <StarPicker value={rating} onChange={setRating} />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold mb-1" style={{ color: '#64748b' }}>Opinia *</label>
-                <textarea
-                  value={text}
-                  onChange={e => setText(e.target.value)}
-                  required
-                  rows={4}
-                  placeholder="Opisz swój pobyt..."
-                  className="w-full px-3 py-2.5 text-sm rounded-xl border outline-none resize-none"
-                  style={{ borderColor: '#e2e8f0', color: '#0d2f45' }}
-                  onFocus={e => (e.currentTarget.style.borderColor = '#124f74')}
-                  onBlur={e => (e.currentTarget.style.borderColor = '#e2e8f0')}
-                />
-              </div>
-              {error && (
-                <p className="text-sm" style={{ color: '#dc2626' }}>{error}</p>
-              )}
-              <button
-                type="submit"
-                disabled={status === 'loading'}
-                className="w-full py-3 rounded-2xl font-semibold text-sm flex items-center justify-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-60"
-                style={{ backgroundColor: '#124f74', color: '#fff' }}
-              >
-                {status === 'loading'
-                  ? <><Loader2 size={15} className="animate-spin" /> Wysyłanie...</>
-                  : <><PenLine size={15} /> Wyślij opinię</>
-                }
-              </button>
-            </form>
-          </>
-        )}
-      </motion.div>
-    </div>
-  )
+				{status === 'success' ? (
+					<div className='flex flex-col items-center gap-4 py-8 text-center'>
+						<CheckCircle size={48} style={{ color: '#3a8067' }} />
+						<h3 className='text-xl font-bold' style={{ color: '#0d2f45' }}>
+							Dziękujemy!
+						</h3>
+						<p className='text-sm' style={{ color: '#64748b' }}>
+							Twoja opinia zostanie opublikowana po weryfikacji.
+						</p>
+					</div>
+				) : (
+					<>
+						<h3
+							className='text-xl font-bold mb-1'
+							style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#0d2f45' }}>
+							Napisz opinię
+						</h3>
+						<p className='text-sm mb-6' style={{ color: '#64748b' }}>
+							Podziel się wrażeniami z pobytu. Opinia pojawi się natychmiast.
+						</p>
+						<form onSubmit={handleSubmit} className='space-y-4'>
+							<div className='grid grid-cols-2 gap-3'>
+								<div>
+									<label className='block text-xs font-semibold mb-1' style={{ color: '#64748b' }}>
+										Imię *
+									</label>
+									<input
+										type='text'
+										value={name}
+										onChange={e => setName(e.target.value)}
+										required
+										placeholder='Jan K.'
+										className='w-full px-3 py-2.5 text-sm rounded-xl border outline-none'
+										style={{ borderColor: '#e2e8f0', color: '#0d2f45' }}
+										onFocus={e => (e.currentTarget.style.borderColor = '#124f74')}
+										onBlur={e => (e.currentTarget.style.borderColor = '#e2e8f0')}
+									/>
+								</div>
+								<div>
+									<label className='block text-xs font-semibold mb-1' style={{ color: '#64748b' }}>
+										Miasto
+									</label>
+									<input
+										type='text'
+										value={location}
+										onChange={e => setLocation(e.target.value)}
+										placeholder='Warszawa'
+										className='w-full px-3 py-2.5 text-sm rounded-xl border outline-none'
+										style={{ borderColor: '#e2e8f0', color: '#0d2f45' }}
+										onFocus={e => (e.currentTarget.style.borderColor = '#124f74')}
+										onBlur={e => (e.currentTarget.style.borderColor = '#e2e8f0')}
+									/>
+								</div>
+							</div>
+							<div>
+								<label className='block text-xs font-semibold mb-2' style={{ color: '#64748b' }}>
+									Ocena *
+								</label>
+								<StarPicker value={rating} onChange={setRating} />
+							</div>
+							<div>
+								<label className='block text-xs font-semibold mb-1' style={{ color: '#64748b' }}>
+									Opinia *
+								</label>
+								<textarea
+									value={text}
+									onChange={e => setText(e.target.value)}
+									required
+									rows={4}
+									placeholder='Opisz swój pobyt...'
+									className='w-full px-3 py-2.5 text-sm rounded-xl border outline-none resize-none'
+									style={{ borderColor: '#e2e8f0', color: '#0d2f45' }}
+									onFocus={e => (e.currentTarget.style.borderColor = '#124f74')}
+									onBlur={e => (e.currentTarget.style.borderColor = '#e2e8f0')}
+								/>
+							</div>
+							{error && (
+								<p className='text-sm' style={{ color: '#dc2626' }}>
+									{error}
+								</p>
+							)}
+							<button
+								type='submit'
+								disabled={status === 'loading'}
+								className='w-full py-3 rounded-2xl font-semibold text-sm flex items-center justify-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-60'
+								style={{ backgroundColor: '#124f74', color: '#fff' }}>
+								{status === 'loading' ? (
+									<>
+										<Loader2 size={15} className='animate-spin' /> Wysyłanie...
+									</>
+								) : (
+									<>
+										<PenLine size={15} /> Wyślij opinię
+									</>
+								)}
+							</button>
+						</form>
+					</>
+				)}
+			</motion.div>
+		</div>
+	)
 }
 
 /* ─── Helper animacji ────────────────────────────────────────── */
@@ -256,617 +283,692 @@ function ReviewForm({ onClose, onSubmitted }: { onClose: () => void; onSubmitted
 /* ─── Strona Główna ──────────────────────────────────────────── */
 
 export default function HomePage() {
-  const heroRef = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ['start start', 'end start'],
-  })
-  const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '25%'])
+	const heroRef = useRef<HTMLDivElement>(null)
+	const { scrollYProgress } = useScroll({
+		target: heroRef,
+		offset: ['start start', 'end start'],
+	})
+	const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '25%'])
 
-  const [reviews, setReviews] = useState<ReviewItem[]>([])
-  const [showReviewForm, setShowReviewForm] = useState(false)
+	const [reviews, setReviews] = useState<ReviewItem[]>([])
+	const [showReviewForm, setShowReviewForm] = useState(false)
+	const [openNote, setOpenNote] = useState<string | null>(null)
 
-  useEffect(() => {
-    fetch('/api/reviews/list')
-      .then(r => r.json())
-      .then(d => setReviews(d.reviews ?? []))
-      .catch(() => {})
-  }, [])
+	useEffect(() => {
+		fetch('/api/reviews/list')
+			.then(r => r.json())
+			.then(d => setReviews(d.reviews ?? []))
+			.catch(() => {})
+	}, [])
 
-  return (
-    <>
-      {/* ══════════════════════════════════════════
+	return (
+		<>
+			{/* ══════════════════════════════════════════
           HERO
       ══════════════════════════════════════════ */}
-      <section
-        ref={heroRef}
-        className="relative overflow-hidden"
-        style={{ minHeight: '100svh' }}
-      >
-        {/* Parallax image */}
-        <motion.div className="absolute inset-0 scale-110" style={{ y: heroY }}>
-          <Image
-            src="/img/1000002722.jpg"
-            alt="Leśna ścieżka ku Morzu Bałtyckiemu w Dębinie"
-            fill
-            priority
-            quality={90}
-            className="object-cover"
-            sizes="100vw"
-          />
-          {/* Gradient overlay */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                'linear-gradient(to bottom, rgba(10,31,46,0.35) 0%, rgba(10,31,46,0.15) 40%, rgba(10,31,46,0.55) 80%, rgba(10,31,46,0.85) 100%)',
-            }}
-          />
-        </motion.div>
+			<section ref={heroRef} className='relative overflow-hidden' style={{ minHeight: '100svh' }}>
+				{/* Parallax image */}
+				<motion.div className='absolute inset-0 scale-110' style={{ y: heroY }}>
+					<Image
+						src='/img/1000002722.jpg'
+						alt='Leśna ścieżka ku Morzu Bałtyckiemu w Dębinie'
+						fill
+						priority
+						quality={90}
+						className='object-cover'
+						sizes='100vw'
+					/>
+					{/* Gradient overlay */}
+					<div
+						className='absolute inset-0'
+						style={{
+							background:
+								'linear-gradient(to bottom, rgba(10,31,46,0.35) 0%, rgba(10,31,46,0.15) 40%, rgba(10,31,46,0.55) 80%, rgba(10,31,46,0.85) 100%)',
+						}}
+					/>
+				</motion.div>
 
-        {/* Treść Hero */}
-        <div className="relative z-10 flex flex-col items-center justify-center text-center text-white px-4 py-24 md:py-32 min-h-[100svh]">
-          <motion.div
-            initial={{ opacity: 0, y: 28 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0, ease: 'easeOut' as const }}
-            className="mb-3 inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium tracking-widest uppercase"
-            style={{ backgroundColor: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.2)', color: '#b3ddf0' }}
-          >
-            <a
-              href="https://maps.google.com/?q=ul.+Modrzewiowa+29,+76-211+Dębina"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 hover:opacity-80 transition-opacity"
-              style={{ color: 'inherit' }}
-            >
-              <MapPin size={12} />
-              Dębina · Wybrzeże Bałtyku
-            </a>
-          </motion.div>
+				{/* Treść Hero */}
+				<div className='relative z-10 flex flex-col items-center justify-center text-center text-white px-4 py-24 md:py-32 min-h-[100svh]'>
+					<motion.div
+						initial={{ opacity: 0, y: 28 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.6, delay: 0, ease: 'easeOut' as const }}
+						className='mb-3 inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium tracking-widest uppercase'
+						style={{
+							backgroundColor: 'rgba(255,255,255,0.15)',
+							backdropFilter: 'blur(8px)',
+							border: '1px solid rgba(255,255,255,0.2)',
+							color: '#b3ddf0',
+						}}>
+						<a
+							href='https://maps.google.com/?q=ul.+Modrzewiowa+29,+76-211+Dębina'
+							target='_blank'
+							rel='noopener noreferrer'
+							className='inline-flex items-center gap-2 hover:opacity-80 transition-opacity'
+							style={{ color: 'inherit' }}>
+							<MapPin size={12} />
+							Dębina · Wybrzeże Bałtyku
+						</a>
+					</motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 28 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.12, ease: 'easeOut' as const }}
-            className="mt-4 mb-6 max-w-3xl"
-            style={{
-              fontFamily: "'Playfair Display', Georgia, serif",
-              fontSize: 'clamp(2.5rem, 6vw, 5rem)',
-              fontWeight: 700,
-              lineHeight: 1.1,
-              letterSpacing: '-0.02em',
-            }}
-          >
-            Baza dla Twojego odpoczynku
-          </motion.h1>
+					<motion.h1
+						initial={{ opacity: 0, y: 28 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.6, delay: 0.12, ease: 'easeOut' as const }}
+						className='mt-4 mb-6 max-w-3xl'
+						style={{
+							fontFamily: "'Playfair Display', Georgia, serif",
+							fontSize: 'clamp(2.5rem, 6vw, 5rem)',
+							fontWeight: 700,
+							lineHeight: 1.1,
+							letterSpacing: '-0.02em',
+						}}>
+						Baza dla Twojego odpoczynku
+					</motion.h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 28 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.24, ease: 'easeOut' as const }}
-            className="mb-10 max-w-lg text-base md:text-lg leading-relaxed"
-            style={{ color: 'rgba(255,255,255,0.82)' }}
-          >
-            Dwa komfortowe apartamenty w stylu loft w pierwszej linii brzegowej Dębiny —
-            między Rowami a Ustką, ok.&nbsp;400&nbsp;m od plaży Morza&nbsp;Bałtyckiego.
-          </motion.p>
+					<motion.p
+						initial={{ opacity: 0, y: 28 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.6, delay: 0.24, ease: 'easeOut' as const }}
+						className='mb-10 max-w-lg text-base md:text-lg leading-relaxed'
+						style={{ color: 'rgba(255,255,255,0.82)' }}>
+						Dwa komfortowe apartamenty w stylu loft w pierwszej linii brzegowej Dębiny — między Rowami a Ustką,
+						ok.&nbsp;400&nbsp;m od plaży Morza&nbsp;Bałtyckiego.
+					</motion.p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 28 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.36, ease: 'easeOut' as const }}
-            className="flex flex-col sm:flex-row gap-3"
-          >
-            <Link
-              href="/contact"
-              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl font-semibold text-sm transition-all hover:opacity-90 active:scale-95"
-              style={{ backgroundColor: '#2280b8', color: '#fff' }}
-            >
-              Zarezerwuj termin
-              <ArrowRight size={16} />
-            </Link>
-            <Link
-              href="/apartments"
-              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl font-semibold text-sm transition-all hover:bg-white/20"
-              style={{ border: '1.5px solid rgba(255,255,255,0.5)', color: '#fff', backdropFilter: 'blur(4px)' }}
-            >
-              Zobacz apartamenty
-            </Link>
-          </motion.div>
-        </div>
+					<motion.div
+						initial={{ opacity: 0, y: 28 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.6, delay: 0.36, ease: 'easeOut' as const }}
+						className='flex flex-col sm:flex-row gap-3'>
+						<Link
+							href='/contact'
+							className='inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl font-semibold text-sm transition-all hover:opacity-90 active:scale-95'
+							style={{ backgroundColor: '#2280b8', color: '#fff' }}>
+							Zarezerwuj termin
+							<ArrowRight size={16} />
+						</Link>
+						<Link
+							href='/apartments'
+							className='inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl font-semibold text-sm transition-all hover:bg-white/20'
+							style={{ border: '1.5px solid rgba(255,255,255,0.5)', color: '#fff', backdropFilter: 'blur(4px)' }}>
+							Zobacz apartamenty
+						</Link>
+					</motion.div>
+				</div>
 
-        {/* Scrolldown hint */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.8, duration: 0.8 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5"
-          style={{ color: 'rgba(255,255,255,0.5)' }}
-        >
-          <span className="text-[10px] tracking-widest uppercase">Przewiń</span>
-          <motion.div
-            animate={{ y: [0, 6, 0] }}
-            transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }}
-            className="w-px h-8 rounded-full"
-            style={{ background: 'linear-gradient(to bottom, rgba(255,255,255,0.5), transparent)' }}
-          />
-        </motion.div>
-      </section>
+				{/* Scrolldown hint */}
+				<motion.div
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					transition={{ delay: 1.8, duration: 0.8 }}
+					className='absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5'
+					style={{ color: 'rgba(255,255,255,0.5)' }}>
+					<span className='text-[10px] tracking-widest uppercase'>Przewiń</span>
+					<motion.div
+						animate={{ y: [0, 6, 0] }}
+						transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }}
+						className='w-px h-8 rounded-full'
+						style={{ background: 'linear-gradient(to bottom, rgba(255,255,255,0.5), transparent)' }}
+					/>
+				</motion.div>
+			</section>
 
-      {/* ══════════════════════════════════════════
+			{/* ══════════════════════════════════════════
           FEATURES STRIP
       ══════════════════════════════════════════ */}
-      <section className="py-16 px-4" style={{ backgroundColor: '#f0f9fd' }}>
-        <div className="container mx-auto max-w-5xl">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {features.map(({ icon: Icon, title, desc }, i) => (
-              <motion.div
-                key={title}
-                initial={{ opacity: 0, y: 28 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: i * 0.1, ease: 'easeOut' as const }}
-                className="flex flex-col items-center text-center gap-3"
-              >
-                <div
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center"
-                  style={{ backgroundColor: '#ddf0f9' }}
-                >
-                  <Icon size={22} style={{ color: '#124f74' }} />
-                </div>
-                <h3 className="font-semibold text-sm" style={{ color: '#0d2f45' }}>
-                  {title}
-                </h3>
-                <p className="text-xs leading-relaxed" style={{ color: '#64748b' }}>
-                  {desc}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+			<section className='py-16 px-4' style={{ backgroundColor: '#f0f9fd' }}>
+				<div className='container mx-auto max-w-5xl'>
+					<div className='grid grid-cols-2 md:grid-cols-4 gap-8'>
+						{features.map(({ icon: Icon, title, desc }, i) => (
+							<motion.div
+								key={title}
+								initial={{ opacity: 0, y: 28 }}
+								whileInView={{ opacity: 1, y: 0 }}
+								viewport={{ once: true }}
+								transition={{ duration: 0.6, delay: i * 0.1, ease: 'easeOut' as const }}
+								className='flex flex-col items-center text-center gap-3'>
+								<div
+									className='w-12 h-12 rounded-2xl flex items-center justify-center'
+									style={{ backgroundColor: '#ddf0f9' }}>
+									<Icon size={22} style={{ color: '#124f74' }} />
+								</div>
+								<h3 className='font-semibold text-sm' style={{ color: '#0d2f45' }}>
+									{title}
+								</h3>
+								<p className='text-xs leading-relaxed' style={{ color: '#64748b' }}>
+									{desc}
+								</p>
+							</motion.div>
+						))}
+					</div>
+				</div>
+			</section>
 
-      {/* ══════════════════════════════════════════
+			{/* ══════════════════════════════════════════
           O NAS
       ══════════════════════════════════════════ */}
-      <section className="py-20 px-4 overflow-hidden">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            {/* Zdjęcie */}
-            <motion.div
-              initial={{ opacity: 0, y: 28 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, ease: 'easeOut' as const }}
-              className="relative"
-            >
-              <div
-                className="relative w-full overflow-hidden"
-                style={{ borderRadius: '1.5rem', aspectRatio: '4/5' }}
-              >
-                <Image
-                  src="/img/DSC02445.JPG"
-                  alt="Ścieżka przez las ku morzu w Dębinie"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                />
-              </div>
-              {/* dekoracyjny element */}
-              <div
-                className="absolute -bottom-4 -right-4 w-32 h-32 rounded-3xl -z-10"
-                style={{ backgroundColor: '#ddf0f9' }}
-              />
-            </motion.div>
+			<section className='py-20 px-4 overflow-hidden'>
+				<div className='container mx-auto max-w-6xl'>
+					<div className='grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center'>
+						{/* Zdjęcie */}
+						<motion.div
+							initial={{ opacity: 0, y: 28 }}
+							whileInView={{ opacity: 1, y: 0 }}
+							viewport={{ once: true }}
+							transition={{ duration: 0.6, ease: 'easeOut' as const }}
+							className='relative'>
+							<div className='relative w-full overflow-hidden' style={{ borderRadius: '1.5rem', aspectRatio: '4/5' }}>
+								<Image
+									src='/img/DSC02445.JPG'
+									alt='Ścieżka przez las ku morzu w Dębinie'
+									fill
+									className='object-cover'
+									sizes='(max-width: 1024px) 100vw, 50vw'
+								/>
+							</div>
+							{/* dekoracyjny element */}
+							<div
+								className='absolute -bottom-4 -right-4 w-32 h-32 rounded-3xl -z-10'
+								style={{ backgroundColor: '#ddf0f9' }}
+							/>
+						</motion.div>
 
-            {/* Tekst */}
-            <motion.div
-              initial={{ opacity: 0, y: 28 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' as const }}
-              className="flex flex-col gap-6"
-            >
-              <div>
-                <span
-                  className="text-xs font-semibold uppercase tracking-widest"
-                  style={{ color: '#3a8067' }}
-                >
-                  O nas
-                </span>
-                <h2
-                  className="mt-2 text-3xl md:text-4xl leading-tight"
-                  style={{
-                    fontFamily: "'Playfair Display', Georgia, serif",
-                    fontWeight: 700,
-                    color: '#0d2f45',
-                  }}
-                >
-                  Twój azyl na Wybrzeżu Bałtyckim
-                </h2>
-              </div>
+						{/* Tekst */}
+						<motion.div
+							initial={{ opacity: 0, y: 28 }}
+							whileInView={{ opacity: 1, y: 0 }}
+							viewport={{ once: true }}
+							transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' as const }}
+							className='flex flex-col gap-6'>
+							<div>
+								<span className='text-xs font-semibold uppercase tracking-widest' style={{ color: '#3a8067' }}>
+									O nas
+								</span>
+								<h2
+									className='mt-2 text-3xl md:text-4xl leading-tight'
+									style={{
+										fontFamily: "'Playfair Display', Georgia, serif",
+										fontWeight: 700,
+										color: '#0d2f45',
+									}}>
+									Twój azyl na Wybrzeżu Bałtyckim
+								</h2>
+							</div>
 
-              <p className="text-base leading-relaxed" style={{ color: '#4a5568' }}>
-                Dębina to mała, spokojna nadmorska miejscowość w województwie pomorskim,
-                położona między Rowami a Ustką na Wybrzeżu Słowińskim. Słynie z wspaniałego
-                klifu, piaszczystej plaży oraz bezpośredniego sąsiedztwa lasów Natura 2000.
-                Idealne miejsce dla tych, którzy szukają odpoczynku, ciszy lub ucieczki od
-                codzienności.
-              </p>
+							<p className='text-base leading-relaxed' style={{ color: '#4a5568' }}>
+								Dębina to mała, spokojna nadmorska miejscowość w województwie pomorskim, położona między Rowami a Ustką
+								na Wybrzeżu Słowińskim. Słynie z wspaniałego klifu, piaszczystej plaży oraz bezpośredniego sąsiedztwa
+								lasów Natura 2000. Idealne miejsce dla tych, którzy szukają odpoczynku, ciszy lub ucieczki od
+								codzienności.
+							</p>
 
-              <p className="text-base leading-relaxed" style={{ color: '#4a5568' }}>
-                Nasze apartamenty mieszczą się w budynku z windą, usytuowanym w pierwszej
-                linii brzegowej. Każdy dzień możesz zacząć od porannej kawy na tarasie,
-                wdychając zapach morskiej bryzy i lasu. Lokale urządzone są w nowoczesnym
-                stylu loft, z wysokim standardem wyposażenia i nadmorskim klimatem.
-              </p>
+							<p className='text-base leading-relaxed' style={{ color: '#4a5568' }}>
+								Nasze apartamenty mieszczą się w budynku z windą, usytuowanym w pierwszej linii brzegowej. Każdy dzień
+								możesz zacząć od porannej kawy na tarasie, wdychając zapach morskiej bryzy i lasu. Lokale urządzone są w
+								nowoczesnym stylu loft, z wysokim standardem wyposażenia i nadmorskim klimatem.
+							</p>
 
-              <a
-                href="https://maps.google.com/?q=ul.+Modrzewiowa+29,+76-211+Dębina"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-start gap-4 p-5 rounded-2xl transition-colors hover:opacity-90"
-                style={{ backgroundColor: '#f0f9fd', border: '1px solid #b3ddf0' }}
-              >
-                <MapPin size={20} style={{ color: '#2280b8', flexShrink: 0, marginTop: '2px' }} />
-                <div>
-                  <p className="font-semibold text-sm" style={{ color: '#0d2f45' }}>
-                    Dębina, gmina Ustka
-                  </p>
-                  <p className="text-xs mt-0.5" style={{ color: '#64748b' }}>
-                    Wybrzeże Słowińskie · Województwo Pomorskie · ok. 400 m spacerem do plaży
-                  </p>
-                </div>
-              </a>
+							<a
+								href='https://maps.google.com/?q=ul.+Modrzewiowa+29,+76-211+Dębina'
+								target='_blank'
+								rel='noopener noreferrer'
+								className='flex items-start gap-4 p-5 rounded-2xl transition-colors hover:opacity-90'
+								style={{ backgroundColor: '#f0f9fd', border: '1px solid #b3ddf0' }}>
+								<MapPin size={20} style={{ color: '#2280b8', flexShrink: 0, marginTop: '2px' }} />
+								<div>
+									<p className='font-semibold text-sm' style={{ color: '#0d2f45' }}>
+										Dębina, gmina Ustka
+									</p>
+									<p className='text-xs mt-0.5' style={{ color: '#64748b' }}>
+										Wybrzeże Słowińskie · Województwo Pomorskie · ok. 400 m spacerem do plaży
+									</p>
+								</div>
+							</a>
 
-              <Link
-                href="/apartments"
-                className="self-start inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-semibold text-sm transition-all hover:opacity-90"
-                style={{ backgroundColor: '#124f74', color: '#fff' }}
-              >
-                Nasze apartamenty
-                <ArrowRight size={15} />
-              </Link>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+							<Link
+								href='/apartments'
+								className='self-start inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-semibold text-sm transition-all hover:opacity-90'
+								style={{ backgroundColor: '#124f74', color: '#fff' }}>
+								Nasze apartamenty
+								<ArrowRight size={15} />
+							</Link>
+						</motion.div>
+					</div>
+				</div>
+			</section>
 
-      {/* ══════════════════════════════════════════
+			{/* ══════════════════════════════════════════
           DĘBINA I OKOLICA
       ══════════════════════════════════════════ */}
-      <section className="py-20 px-4" style={{ backgroundColor: '#faf8f4' }}>
-        <div className="container mx-auto max-w-6xl">
-          <motion.div
-            initial={{ opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: 'easeOut' as const }}
-            className="text-center mb-14"
-          >
-            <span
-              className="text-xs font-semibold uppercase tracking-widest"
-              style={{ color: '#3a8067' }}
-            >
-              Atrakcje
-            </span>
-            <h2
-              className="mt-2 text-3xl md:text-4xl"
-              style={{
-                fontFamily: "'Playfair Display', Georgia, serif",
-                fontWeight: 700,
-                color: '#0d2f45',
-              }}
-            >
-              Dębina i jej skarby
-            </h2>
-            <p className="mt-4 max-w-xl mx-auto text-base" style={{ color: '#64748b' }}>
-              Maleńka wieś ukryta między lasem a morzem. Tu czas płynie wolniej,
-              a każdy spacer to odkrycie.
-            </p>
-          </motion.div>
+			<section className='py-20 px-4' style={{ backgroundColor: '#faf8f4' }}>
+				<div className='container mx-auto max-w-6xl'>
+					<motion.div
+						initial={{ opacity: 0, y: 28 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+						transition={{ duration: 0.6, ease: 'easeOut' as const }}
+						className='text-center mb-14'>
+						<span className='text-xs font-semibold uppercase tracking-widest' style={{ color: '#3a8067' }}>
+							Atrakcje
+						</span>
+						<h2
+							className='mt-2 text-3xl md:text-4xl'
+							style={{
+								fontFamily: "'Playfair Display', Georgia, serif",
+								fontWeight: 700,
+								color: '#0d2f45',
+							}}>
+							Dębina i jej skarby
+						</h2>
+						<p className='mt-4 max-w-xl mx-auto text-base' style={{ color: '#64748b' }}>
+							Maleńka wieś ukryta między lasem a morzem. Tu czas płynie wolniej, a każdy spacer to odkrycie.
+						</p>
+					</motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {attractions.map(({ icon: Icon, title, desc, img }, i) => (
-              <motion.div
-                key={title}
-                initial={{ opacity: 0, y: 28 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: i * 0.12, ease: 'easeOut' as const }}
-                className="group flex flex-col overflow-hidden rounded-3xl bg-white shadow-sm hover:shadow-md transition-shadow duration-300"
-              >
-                {/* Zdjęcie */}
-                <div className="relative overflow-hidden" style={{ height: '220px' }}>
-                  <Image
-                    src={img}
-                    alt={title}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                  />
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      background:
-                        'linear-gradient(to top, rgba(10,31,46,0.4) 0%, transparent 60%)',
-                    }}
-                  />
-                  <div
-                    className="absolute bottom-3 left-4 w-9 h-9 rounded-xl flex items-center justify-center"
-                    style={{ backgroundColor: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(6px)' }}
-                  >
-                    <Icon size={18} color="#ffffff" />
-                  </div>
-                </div>
-                {/* Tekst */}
-                <div className="p-6 flex flex-col gap-2 flex-grow">
-                  <h3 className="font-semibold text-base" style={{ color: '#0d2f45' }}>
-                    {title}
-                  </h3>
-                  <p className="text-sm leading-relaxed" style={{ color: '#64748b' }}>
-                    {desc}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+					<div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
+						{attractions.map(({ icon: Icon, title, desc, img }, i) => (
+							<motion.div
+								key={title}
+								initial={{ opacity: 0, y: 28 }}
+								whileInView={{ opacity: 1, y: 0 }}
+								viewport={{ once: true }}
+								transition={{ duration: 0.6, delay: i * 0.12, ease: 'easeOut' as const }}
+								className='group flex flex-col overflow-hidden rounded-3xl bg-white shadow-sm hover:shadow-md transition-shadow duration-300'>
+								{/* Zdjęcie */}
+								<div className='relative overflow-hidden' style={{ height: '220px' }}>
+									<Image
+										src={img}
+										alt={title}
+										fill
+										className='object-cover transition-transform duration-500 group-hover:scale-105'
+										sizes='(max-width: 768px) 100vw, 33vw'
+									/>
+									<div
+										className='absolute inset-0'
+										style={{
+											background: 'linear-gradient(to top, rgba(10,31,46,0.4) 0%, transparent 60%)',
+										}}
+									/>
+									<div
+										className='absolute bottom-3 left-4 w-9 h-9 rounded-xl flex items-center justify-center'
+										style={{ backgroundColor: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(6px)' }}>
+										<Icon size={18} color='#ffffff' />
+									</div>
+								</div>
+								{/* Tekst */}
+								<div className='p-6 flex flex-col gap-2 flex-grow'>
+									<h3 className='font-semibold text-base' style={{ color: '#0d2f45' }}>
+										{title}
+									</h3>
+									<p className='text-sm leading-relaxed' style={{ color: '#64748b' }}>
+										{desc}
+									</p>
+								</div>
+							</motion.div>
+						))}
+					</div>
+				</div>
+			</section>
 
-      {/* ══════════════════════════════════════════
+			{/* ══════════════════════════════════════════
           ATRAKCJE W OKOLICY
       ══════════════════════════════════════════ */}
-      <section className="py-20 px-4" style={{ backgroundColor: '#f0f9fd' }}>
-        <div className="container mx-auto max-w-6xl">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: 'easeOut' as const }}
-            className="text-center mb-12"
-          >
-            <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#3a8067' }}>
-              Okolica
-            </span>
-            <h2 className="mt-2 text-3xl md:text-4xl" style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700, color: '#0d2f45' }}>
-              Ciekawe miejsca w pobliżu
-            </h2>
-            <p className="mt-3 max-w-2xl mx-auto text-sm md:text-base" style={{ color: '#64748b' }}>
-              Atrakcje turystyczne w pobliżu naszych apartamentów
-            </p>
-          </motion.div>
+			<section className='py-20 px-4' style={{ backgroundColor: '#f0f9fd' }}>
+				<div className='container mx-auto max-w-6xl'>
+					<motion.div
+						initial={{ opacity: 0, y: 24 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+						transition={{ duration: 0.6, ease: 'easeOut' as const }}
+						className='text-center mb-12'>
+						<span className='text-xs font-semibold uppercase tracking-widest' style={{ color: '#3a8067' }}>
+							Okolica
+						</span>
+						<h2
+							className='mt-2 text-3xl md:text-4xl'
+							style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700, color: '#0d2f45' }}>
+							Ciekawe miejsca w pobliżu
+						</h2>
+						<p className='mt-3 max-w-2xl mx-auto text-sm md:text-base' style={{ color: '#64748b' }}>
+							Atrakcje turystyczne w pobliżu naszych apartamentów
+						</p>
+					</motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
-            {[
-              { dist: '~400 m',   label: 'Plaża w Dębinie',                        desc: 'Ścieżkami spacerowymi przez las dębowo-grabowy Natura 2000' },
-              { dist: '~2 km',    label: 'Wrak duńskiego torpedowca w Poddąbiu',   desc: 'Wyprawa piesza plażą' },
-              { dist: '~4,8 km',  label: 'Wieża widokowa nad jeziorem Gardno',     desc: 'Wyprawa piesza' },
-              { dist: '~5 km',    label: 'Punkt widokowy na "Kamienisko"',         desc: 'Ze szczytu klifu można dostrzec podwodne głazy, o które rozbijały się statki' },
-              { dist: '~5 km',    label: 'Most – kładka nad wąwozem Poddąbie',     desc: 'Wyprawa piesza' },
-              { dist: '~5 km',    label: 'Kościół św. Apostołów Piotra i Pawła w Rowach', desc: '' },
-              { dist: '~6 km',    label: 'Słowiński Park Narodowy',               desc: '' },
-              { dist: '~13,5 km', label: 'Zatopiony las koło Czołpina',           desc: 'Trasa rowerowa' },
-              { dist: '~19 km',   label: 'Ustka — port, promenada, Latarnia morska, Bunkry Blüchera', desc: '' },
-              { dist: '~35 km',   label: 'Wydma Łącka – Łeba',                   desc: 'Trasa rowerowa' },
-              { dist: '~47 km',   label: 'Aquapark Jarosławiec',                  desc: '' },
-            ].map(({ dist, label, desc }, i) => (
-              <motion.div
-                key={label}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: i * 0.05, ease: 'easeOut' as const }}
-                className="flex items-start gap-4 p-4 rounded-2xl bg-white"
-                style={{ border: '1px solid #ddf0f9' }}
-              >
-                <span
-                  className="shrink-0 px-2.5 py-1 rounded-lg text-xs font-bold"
-                  style={{ backgroundColor: '#124f74', color: '#fff', minWidth: '60px', textAlign: 'center' }}
-                >
-                  {dist}
-                </span>
-                <div>
-                  <p className="font-semibold text-sm" style={{ color: '#0d2f45' }}>{label}</p>
-                  {desc && <p className="text-xs mt-0.5" style={{ color: '#94a3b8' }}>{desc}</p>}
-                </div>
-              </motion.div>
-            ))}
-          </div>
+					<div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-12'>
+						{[
+							{
+								dist: '~400 m',
+								label: 'Plaża w Dębinie',
+								desc: 'Ścieżkami spacerowymi przez las dębowo-grabowy Natura 2000',
+							},
+							{ dist: '~2 km', label: 'Wrak duńskiego torpedowca w Poddąbiu', desc: 'Wyprawa piesza plażą' },
+							{ dist: '~4,8 km', label: 'Wieża widokowa nad jeziorem Gardno', desc: 'Wyprawa piesza' },
+							{
+								dist: '~5 km',
+								label: 'Punkt widokowy na "Kamienisko"',
+								desc: 'Ze szczytu klifu można dostrzec podwodne głazy, o które rozbijały się statki',
+							},
+							{ dist: '~5 km', label: 'Most – kładka nad wąwozem Poddąbie', desc: 'Wyprawa piesza' },
+							{ dist: '~5 km', label: 'Kościół św. Apostołów Piotra i Pawła w Rowach', desc: '' },
+							{ dist: '~6 km', label: 'Słowiński Park Narodowy', desc: '' },
+							{ dist: '~13,5 km', label: 'Zatopiony las koło Czołpina', desc: 'Trasa rowerowa' },
+							{ dist: '~19 km', label: 'Ustka — port, promenada, Latarnia morska, Bunkry Blüchera', desc: '' },
+							{ dist: '~35 km', label: 'Wydma Łącka – Łeba', desc: 'Trasa rowerowa' },
+							{ dist: '~47 km', label: 'Aquapark Jarosławiec', desc: '' },
+						].map(({ dist, label, desc }, i) => (
+							<motion.div
+								key={label}
+								initial={{ opacity: 0, y: 16 }}
+								whileInView={{ opacity: 1, y: 0 }}
+								viewport={{ once: true }}
+								transition={{ duration: 0.4, delay: i * 0.05, ease: 'easeOut' as const }}
+								className='flex items-start gap-4 p-4 rounded-2xl bg-white'
+								style={{ border: '1px solid #ddf0f9' }}>
+								<span
+									className='shrink-0 px-2.5 py-1 rounded-lg text-xs font-bold'
+									style={{ backgroundColor: '#124f74', color: '#fff', minWidth: '60px', textAlign: 'center' }}>
+									{dist}
+								</span>
+								<div>
+									<p className='font-semibold text-sm' style={{ color: '#0d2f45' }}>
+										{label}
+									</p>
+									{desc && (
+										<p className='text-xs mt-0.5' style={{ color: '#94a3b8' }}>
+											{desc}
+										</p>
+									)}
+								</div>
+							</motion.div>
+						))}
+					</div>
 
-          {/* Trasy spacerowe */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: 'easeOut' as const }}
-          >
-            <h3 className="font-semibold text-lg mb-4" style={{ color: '#0d2f45' }}>
-              Rekomendowane trasy spacerowe
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {[
-                { name: 'Pętla Dębina – Poddąbie', dist: '~3,3 km', time: '1–2 godz.', desc: 'Trasa łącząca Dębinę z Poddąbiem — zróżnicowane krajobrazy klifowe i leśne.' },
-                { name: 'Szlak do Rowów',           dist: '~5 km',   time: 'ok. 1,5 godz.', desc: 'Kierunek wschodni — wysokie klify, piaszczyste wydmy, widoki na morze.' },
-                { name: 'Szlak "Zwiniętych Torów"', dist: 'Ustka–Rowy', time: 'czerwony szlak', desc: 'Historyczny czerwony szlak łączący Ustkę z Rowami wzdłuż wybrzeża.' },
-              ].map(({ name, dist, time, desc }) => (
-                <div
-                  key={name}
-                  className="p-5 rounded-2xl bg-white"
-                  style={{ border: '1px solid #ddf0f9' }}
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <MapPin size={15} style={{ color: '#3a8067' }} />
-                    <p className="font-semibold text-sm" style={{ color: '#0d2f45' }}>{name}</p>
-                  </div>
-                  <div className="flex gap-3 mb-2">
-                    <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: '#daf0ea', color: '#2d6651' }}>{dist}</span>
-                    <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: '#ddf0f9', color: '#124f74' }}>{time}</span>
-                  </div>
-                  <p className="text-xs leading-relaxed" style={{ color: '#64748b' }}>{desc}</p>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
+					{/* Trasy spacerowe */}
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+						transition={{ duration: 0.6, ease: 'easeOut' as const }}>
+						<h3 className='font-semibold text-lg mb-4' style={{ color: '#0d2f45' }}>
+							Rekomendowane trasy spacerowe
+						</h3>
+						<div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+							{[
+								{
+									name: 'Pętla Dębina – Poddąbie',
+									dist: '~3,3 km',
+									time: '1–2 godz.',
+									desc: 'Trasa łącząca Dębinę z Poddąbiem — zróżnicowane krajobrazy klifowe i leśne.',
+								},
+								{
+									name: 'Szlak do Rowów',
+									dist: '~5 km',
+									time: 'ok. 1,5 godz.',
+									desc: 'Kierunek wschodni — wysokie klify, piaszczyste wydmy, widoki na morze.',
+								},
+								{
+									name: 'Szlak "Zwiniętych Torów"',
+									dist: 'Ustka–Rowy',
+									time: 'czerwony szlak',
+									desc: 'Historyczny czerwony szlak łączący Ustkę z Rowami wzdłuż wybrzeża.',
+								},
+							].map(({ name, dist, time, desc }) => (
+								<div key={name} className='p-5 rounded-2xl bg-white' style={{ border: '1px solid #ddf0f9' }}>
+									<div className='flex items-center gap-2 mb-2'>
+										<MapPin size={15} style={{ color: '#3a8067' }} />
+										<p className='font-semibold text-sm' style={{ color: '#0d2f45' }}>
+											{name}
+										</p>
+									</div>
+									<div className='flex gap-3 mb-2'>
+										<span
+											className='text-xs px-2 py-0.5 rounded-full'
+											style={{ backgroundColor: '#daf0ea', color: '#2d6651' }}>
+											{dist}
+										</span>
+										<span
+											className='text-xs px-2 py-0.5 rounded-full'
+											style={{ backgroundColor: '#ddf0f9', color: '#124f74' }}>
+											{time}
+										</span>
+									</div>
+									<p className='text-xs leading-relaxed' style={{ color: '#64748b' }}>
+										{desc}
+									</p>
+								</div>
+							))}
+						</div>
+					</motion.div>
+				</div>
+			</section>
 
-      {/* ══════════════════════════════════════════
+			{/* ══════════════════════════════════════════
           OPINIE GOŚCI
       ══════════════════════════════════════════ */}
-      <section className="py-20 px-4">
-        <div className="container mx-auto max-w-6xl">
-          <motion.div
-            initial={{ opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: 'easeOut' as const }}
-            className="text-center mb-14"
-          >
-            <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#3a8067' }}>
-              Opinie
-            </span>
-            <h2
-              className="mt-2 text-3xl md:text-4xl"
-              style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700, color: '#0d2f45' }}
-            >
-              Co mówią nasi goście
-            </h2>
-            <p className="mt-3 text-sm" style={{ color: '#64748b' }}>
-              Byłeś/aś u nas? Podziel się wrażeniami!
-            </p>
-            <button
-              onClick={() => setShowReviewForm(true)}
-              className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-semibold transition-opacity hover:opacity-80"
-              style={{ backgroundColor: '#124f74', color: '#fff' }}
-            >
-              <PenLine size={15} />
-              Napisz opinię
-            </button>
-          </motion.div>
+			<section className='py-20 px-4'>
+				<div className='container mx-auto max-w-6xl'>
+					<motion.div
+						initial={{ opacity: 0, y: 28 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+						transition={{ duration: 0.6, ease: 'easeOut' as const }}
+						className='text-center mb-14'>
+						<span className='text-xs font-semibold uppercase tracking-widest' style={{ color: '#3a8067' }}>
+							Opinie
+						</span>
+						<h2
+							className='mt-2 text-3xl md:text-4xl'
+							style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700, color: '#0d2f45' }}>
+							Co mówią nasi goście
+						</h2>
+						<p className='mt-3 text-sm' style={{ color: '#64748b' }}>
+							Byłeś/aś u nas? Podziel się wrażeniami!
+						</p>
+						<div className='mt-5 flex flex-wrap items-center justify-center gap-3'>
+							<button
+								onClick={() => setShowReviewForm(true)}
+								className='inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-semibold transition-opacity hover:opacity-80'
+								style={{ backgroundColor: '#124f74', color: '#fff' }}>
+								<PenLine size={15} />
+								Napisz opinię
+							</button>
+							<a
+								href='https://www.booking.com/hotel/pl/debina-ul-modrzewiowa-29-44.pl.html?aid=304142&label=gen173nr-10CAEoggI46AdIM1gEaLYBiAEBmAEzuAEXyAEM2AED6AEB-AEBiAIBqAIBuAKDl8fPBsACAdICJDBiODNjYTEyLWViYTQtNGRlOS05MzIyLTlhNmVlMmViNjliNNgCAeACAQ&sid=95e753ea7ec9c209b0cc4d34d364601a'
+								target='_blank'
+								rel='noopener noreferrer'
+								className='inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm font-semibold transition-colors hover:bg-[#ddf0f9]'
+								style={{ border: '1px solid #b3ddf0', color: '#124f74' }}>
+								Więcej opinii na Booking.com
+								<ExternalLink size={14} />
+							</a>
+						</div>
+					</motion.div>
 
-          {reviews.length === 0 ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-16 rounded-3xl"
-              style={{ backgroundColor: '#f0f9fd', border: '1px dashed #b3ddf0' }}
-            >
-              <Quote size={36} style={{ color: '#b3ddf0', margin: '0 auto 12px' }} />
-              <p className="text-sm" style={{ color: '#94a3b8' }}>
-                Bądź pierwszą osobą, która oceni pobyt!
-              </p>
-            </motion.div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {reviews.map((rev, i) => (
-                <motion.div
-                  key={rev.id}
-                  initial={{ opacity: 0, y: 28 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: i * 0.12, ease: 'easeOut' as const }}
-                  className="flex flex-col gap-4 p-7 rounded-3xl"
-                  style={{ backgroundColor: '#f0f9fd', border: '1px solid #ddf0f9' }}
-                >
-                  <Quote size={28} style={{ color: '#b3ddf0' }} />
-                  <p className="text-sm leading-relaxed flex-grow" style={{ color: '#334155' }}>
-                    {rev.text}
-                  </p>
-                  <div className="flex items-center justify-between pt-2 border-t" style={{ borderColor: '#ddf0f9' }}>
-                    <div>
-                      <p className="font-semibold text-sm" style={{ color: '#0d2f45' }}>{rev.name}</p>
-                      {rev.location && (
-                        <p className="text-xs" style={{ color: '#94a3b8' }}>{rev.location}</p>
-                      )}
-                    </div>
-                    <StarRating count={rev.rating} />
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
+					{reviews.length === 0 ? (
+						<motion.div
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							className='text-center py-16 rounded-3xl'
+							style={{ backgroundColor: '#f0f9fd', border: '1px dashed #b3ddf0' }}>
+							<Quote size={36} style={{ color: '#b3ddf0', margin: '0 auto 12px' }} />
+							<p className='text-sm' style={{ color: '#94a3b8' }}>
+								Bądź pierwszą osobą, która oceni pobyt!
+							</p>
+						</motion.div>
+					) : (
+						<div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+							{reviews.map((rev, i) => (
+								<motion.div
+									key={rev.id}
+									initial={{ opacity: 0, y: 28 }}
+									whileInView={{ opacity: 1, y: 0 }}
+									viewport={{ once: true }}
+									transition={{ duration: 0.6, delay: i * 0.12, ease: 'easeOut' as const }}
+									className='flex flex-col gap-4 p-7 rounded-3xl'
+									style={{ backgroundColor: '#f0f9fd', border: '1px solid #ddf0f9' }}>
+									<Quote size={28} style={{ color: '#b3ddf0' }} />
+									<p className='text-sm leading-relaxed flex-grow' style={{ color: '#334155' }}>
+										{rev.text}
+									</p>
+									<div className='flex items-center justify-between pt-2 border-t' style={{ borderColor: '#ddf0f9' }}>
+										<div>
+											<p className='font-semibold text-sm' style={{ color: '#0d2f45' }}>
+												{rev.name}
+											</p>
+											{rev.location && (
+												<p className='text-xs' style={{ color: '#94a3b8' }}>
+													{rev.location}
+												</p>
+											)}
+										</div>
+										<StarRating count={rev.rating} />
+									</div>
+								</motion.div>
+							))}
+						</div>
+					)}
 
-      <AnimatePresence>
-        {showReviewForm && (
-          <ReviewForm
-            onClose={() => setShowReviewForm(false)}
-            onSubmitted={() => setShowReviewForm(false)}
-          />
-        )}
-      </AnimatePresence>
+					{/* Podziękowania od gości — zeskanowane kartki i wiadomości */}
+					<motion.div
+						initial={{ opacity: 0, y: 28 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+						transition={{ duration: 0.6, ease: 'easeOut' as const }}
+						className='mt-16'>
+						<p
+							className='text-center text-xs font-semibold uppercase tracking-widest mb-8'
+							style={{ color: '#3a8067' }}>
+							Opinie od naszych gości
+						</p>
+						<div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+							{guestNotes.map(note => (
+								<button
+									key={note.src}
+									onClick={() => setOpenNote(note.src)}
+									className='group text-left rounded-3xl overflow-hidden transition-shadow hover:shadow-lg'
+									style={{ border: '1px solid #ddf0f9' }}>
+									<div className='relative w-full' style={{ aspectRatio: '4 / 3', backgroundColor: '#f0f9fd' }}>
+										<Image
+											src={note.src}
+											alt={note.alt}
+											fill
+											className='object-cover object-top transition-transform duration-300 group-hover:scale-105'
+											sizes='(max-width: 768px) 100vw, 33vw'
+										/>
+									</div>
+									<div className='px-4 py-3'>
+										<p className='text-xs font-medium' style={{ color: '#64748b' }}>
+											{note.alt}
+										</p>
+									</div>
+								</button>
+							))}
+						</div>
+					</motion.div>
+				</div>
+			</section>
 
-      {/* ══════════════════════════════════════════
+			<AnimatePresence>
+				{showReviewForm && (
+					<ReviewForm onClose={() => setShowReviewForm(false)} onSubmitted={() => setShowReviewForm(false)} />
+				)}
+			</AnimatePresence>
+
+			<AnimatePresence>
+				{openNote && (
+					<motion.div
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						exit={{ opacity: 0 }}
+						className='fixed inset-0 z-50 flex items-center justify-center p-4'
+						style={{ backgroundColor: 'rgba(10,31,46,0.85)' }}
+						onClick={() => setOpenNote(null)}>
+						<motion.div
+							initial={{ opacity: 0, scale: 0.95 }}
+							animate={{ opacity: 1, scale: 1 }}
+							exit={{ opacity: 0, scale: 0.95 }}
+							transition={{ duration: 0.2, ease: 'easeOut' as const }}
+							className='relative max-w-2xl w-full'
+							onClick={e => e.stopPropagation()}>
+							<button
+								onClick={() => setOpenNote(null)}
+								className='absolute -top-10 right-0 p-1.5 rounded-full hover:bg-white/10 transition-colors'>
+								<X size={22} style={{ color: '#fff' }} />
+							</button>
+							{/* eslint-disable-next-line @next/next/no-img-element */}
+							<img
+								src={openNote}
+								alt='Podziękowanie od gościa'
+								className='w-full max-h-[85vh] object-contain rounded-2xl'
+							/>
+						</motion.div>
+					</motion.div>
+				)}
+			</AnimatePresence>
+
+			{/* ══════════════════════════════════════════
           CTA
       ══════════════════════════════════════════ */}
-      <section className="py-24 px-4 relative overflow-hidden">
-        {/* Tło gradientowe */}
-        <div
-          className="absolute inset-0 -z-10"
-          style={{
-            background: 'linear-gradient(135deg, #0a1f2e 0%, #124f74 50%, #1a6494 100%)',
-          }}
-        />
-        {/* Dekoracyjne kółka */}
-        <div
-          className="absolute -top-32 -right-32 w-96 h-96 rounded-full opacity-10 -z-10"
-          style={{ background: 'radial-gradient(circle, #4aa3d4, transparent)' }}
-        />
-        <div
-          className="absolute -bottom-24 -left-24 w-64 h-64 rounded-full opacity-10 -z-10"
-          style={{ background: 'radial-gradient(circle, #3a8067, transparent)' }}
-        />
+			<section className='py-24 px-4 relative overflow-hidden'>
+				{/* Tło gradientowe */}
+				<div
+					className='absolute inset-0 -z-10'
+					style={{
+						background: 'linear-gradient(135deg, #0a1f2e 0%, #124f74 50%, #1a6494 100%)',
+					}}
+				/>
+				{/* Dekoracyjne kółka */}
+				<div
+					className='absolute -top-32 -right-32 w-96 h-96 rounded-full opacity-10 -z-10'
+					style={{ background: 'radial-gradient(circle, #4aa3d4, transparent)' }}
+				/>
+				<div
+					className='absolute -bottom-24 -left-24 w-64 h-64 rounded-full opacity-10 -z-10'
+					style={{ background: 'radial-gradient(circle, #3a8067, transparent)' }}
+				/>
 
-        <div className="container mx-auto max-w-2xl text-center text-white">
-          <motion.div
-            initial={{ opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: 'easeOut' as const }}
-          >
-            <h2
-              className="text-3xl md:text-5xl mb-4"
-              style={{
-                fontFamily: "'Playfair Display', Georgia, serif",
-                fontWeight: 700,
-                lineHeight: 1.15,
-              }}
-            >
-              Zaplanuj swój wypoczynek
-            </h2>
-            <p
-              className="text-base md:text-lg mb-10 leading-relaxed"
-              style={{ color: 'rgba(255,255,255,0.75)' }}
-            >
-              Sprawdź dostępne terminy i napisz do nas. Odpowiemy szybko i pomożemy
-              wybrać najlepszy apartament dla Ciebie i Twoich bliskich.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-semibold transition-all hover:opacity-90 active:scale-95"
-                style={{ backgroundColor: '#ffffff', color: '#124f74' }}
-              >
-                Zapytaj o termin
-                <ArrowRight size={16} />
-              </Link>
-              <Link
-                href="/apartments"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-semibold transition-all"
-                style={{
-                  border: '1.5px solid rgba(255,255,255,0.35)',
-                  color: '#ffffff',
-                }}
-              >
-                Galeria apartamentów
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-    </>
-  )
+				<div className='container mx-auto max-w-2xl text-center text-white'>
+					<motion.div
+						initial={{ opacity: 0, y: 28 }}
+						whileInView={{ opacity: 1, y: 0 }}
+						viewport={{ once: true }}
+						transition={{ duration: 0.6, ease: 'easeOut' as const }}>
+						<h2
+							className='text-3xl md:text-5xl mb-4'
+							style={{
+								fontFamily: "'Playfair Display', Georgia, serif",
+								fontWeight: 700,
+								lineHeight: 1.15,
+							}}>
+							Zaplanuj swój wypoczynek
+						</h2>
+						<p className='text-base md:text-lg mb-10 leading-relaxed' style={{ color: 'rgba(255,255,255,0.75)' }}>
+							Sprawdź dostępne terminy i napisz do nas. Odpowiemy szybko i pomożemy wybrać najlepszy apartament dla
+							Ciebie i Twoich bliskich.
+						</p>
+						<div className='flex flex-col sm:flex-row gap-3 justify-center'>
+							<Link
+								href='/contact'
+								className='inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-semibold transition-all hover:opacity-90 active:scale-95'
+								style={{ backgroundColor: '#ffffff', color: '#124f74' }}>
+								Zapytaj o termin
+								<ArrowRight size={16} />
+							</Link>
+							<Link
+								href='/apartments'
+								className='inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl font-semibold transition-all'
+								style={{
+									border: '1.5px solid rgba(255,255,255,0.35)',
+									color: '#ffffff',
+								}}>
+								Galeria apartamentów
+							</Link>
+						</div>
+					</motion.div>
+				</div>
+			</section>
+		</>
+	)
 }
